@@ -70,15 +70,15 @@ const AdminSidebar = ({ isOpen, onClose }) => {
     <>
       {/* Sidebar */}
       <motion.div
-        initial={{ x: -300 }}
+        initial={false}
         animate={{ x: isOpen ? 0 : -300 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform lg:translate-x-0 lg:static lg:inset-0"
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="flex items-center justify-between h-16 px-4 bg-gray-800">
           <div className="flex items-center">
             <img
-              src="/images/logo.png"
+              src="/images/white-logo.png"
               alt="The White Barn FL"
               className="h-8 w-auto"
               onError={(e) => {

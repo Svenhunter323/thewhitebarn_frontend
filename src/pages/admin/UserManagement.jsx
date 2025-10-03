@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { 
   FaUser, 
   FaPlus, 
@@ -158,7 +158,7 @@ const UserManagement = () => {
           <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
           <p className="text-gray-600">Manage admin users and permissions</p>
         </div>
-        {admin.role === 'super_admin' && (
+        {admin?.role === 'super_admin' && (
           <AnimatedButton 
             onClick={() => setShowCreateModal(true)}
             className="flex items-center gap-2"

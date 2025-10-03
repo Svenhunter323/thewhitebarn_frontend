@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import useResponsive from '../../hooks/useResponsive';
 import { 
   FaBars, 
   FaTimes, 
@@ -20,9 +21,10 @@ import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 
 const AdminLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const { admin, logout, isAuthenticated } = useAuth();
+  const { isMobile, isDesktop } = useResponsive();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -36,10 +38,21 @@ const AdminLayout = () => {
     }
   }, [isAuthenticated, navigate, location]);
 
-  // Close sidebar on route change (mobile)
+  // Handle responsive sidebar behavior
   useEffect(() => {
-    setSidebarOpen(false);
-  }, [location.pathname]);
+    if (isMobile) {
+      setSidebarOpen(false);
+    } else {
+      setSidebarOpen(true);
+    }
+  }, [isMobile]);
+
+  // Close sidebar on route change (mobile only)
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname, isMobile]);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -67,14 +80,14 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <AdminSidebar 
         isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+        onClose={() => {if (!isDesktop) setSidebarOpen( false)}}
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${sidebarOpen && isDesktop ? 'ml-64' : 'ml-0'}`}>
         {/* Header */}
         <AdminHeader 
-          onMenuClick={() => setSidebarOpen(true)}
+          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
           admin={admin}
           onLogout={handleLogout}
         />
@@ -85,10 +98,11 @@ const AdminLayout = () => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.2 }}
+                initial={isDesktop ? { opacity: 0, x: 20 } : false}
+                animate={isDesktop ? { opacity: 1, x: 0 } : false}
+                exit={isDesktop ? { opacity: 0, x: -20 } : false}
+                transition={isDesktop ? { duration: 0.3, ease: "easeInOut" } : false}
+                className={!isDesktop ? "no-animation" : ""}
               >
                 <Outlet />
               </motion.div>

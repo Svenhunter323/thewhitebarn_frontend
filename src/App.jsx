@@ -19,6 +19,8 @@ import GalleryManagement from './pages/admin/GalleryManagement';
 import ContentManagement from './pages/admin/ContentManagement';
 import ReviewManagement from './pages/admin/ReviewManagement';
 import UserManagement from './pages/admin/UserManagement';
+import Analytics from './pages/admin/Analytics';
+import Settings from './pages/admin/Settings';
 
 function App() {
   return (
@@ -48,6 +50,8 @@ function App() {
               <Route path="reviews" element={<ReviewManagement />} />
               <Route path="users" element={<UserManagement />} />
               <Route path="admins" element={<UserManagement />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="settings" element={<Settings />} />
             </Route>
           </Routes>
         </Router>

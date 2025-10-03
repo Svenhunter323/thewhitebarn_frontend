@@ -11,7 +11,6 @@ axios.interceptors.request.use(
   (config) => {
     // Add authorization header if token exists
     const token = tokenManager.getToken();
-    console.log('Axios interceptor - Token:', token ? 'Found' : 'Not found', 'for URL:', config.url);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

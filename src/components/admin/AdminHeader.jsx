@@ -66,7 +66,7 @@ const AdminHeader = ({ onMenuClick, admin, onLogout }) => {
         <div className="flex items-center">
           <button
             onClick={onMenuClick}
-            className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+            className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
           >
             <FaBars className="h-5 w-5" />
           </button>

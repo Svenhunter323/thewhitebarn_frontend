@@ -40,12 +40,7 @@ class ApiService {
       credentials: 'include', // Include cookies for cross-origin requests
     };
 
-    console.log('API Request:', {
-      url,
-      method: options.method || 'GET',
-      hasToken: !!this.authToken,
-      tokenPreview: this.authToken ? `${this.authToken.substring(0, 20)}...` : 'None'
-    });
+    // API request logging removed for production
 
     try {
       const response = await fetch(url, config);

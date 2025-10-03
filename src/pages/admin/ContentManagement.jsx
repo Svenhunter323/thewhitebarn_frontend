@@ -89,26 +89,29 @@ const ContentManagement = () => {
         <div className="flex gap-3">
           {hasChanges && (
             <AnimatedButton
-              variant="outline"
+              className="btn-primary relative overflow-hidden group"
+              variant="primary"
+              hoverEffect={true}
+              fullWidth={false}
               onClick={() => {
                 fetchContent();
                 setHasChanges(false);
               }}
-              className="flex items-center gap-2"
             >
               <FaUndo className="w-4 h-4" />
-              Reset Changes
+              <span className="relative z-10">Reset Changes</span>
             </AnimatedButton>
           )}
-          <Button
+          <AnimatedButton
             onClick={handleSave}
             loading={saving}
             disabled={!hasChanges}
-            className="flex items-center gap-2"
+            variant="primary"
+            className="btn-primary relative overflow-hidden group"
           >
             <FaSave className="w-4 h-4" />
-            Save Changes
-          </Button>
+            <span className="relative z-10">Save Changes</span>
+          </AnimatedButton>
         </div>
       </div>
 

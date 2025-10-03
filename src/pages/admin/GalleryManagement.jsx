@@ -138,12 +138,17 @@ const GalleryManagement = () => {
           <h1 className="text-2xl font-bold text-gray-900">Gallery Management</h1>
           <p className="text-gray-600">Manage your venue's photo gallery</p>
         </div>
+
         <AnimatedButton
+          className="btn-primary relative overflow-hidden group"
+          variant="primary"
+          size="lg"
+          hoverEffect={true}
+          fullWidth={false}
           onClick={() => setShowUploadModal(true)}
-          className="flex items-center gap-2"
         >
           <FaPlus className="w-4 h-4" />
-          Upload Images
+          <span className="relative z-10">Upload Images</span>
         </AnimatedButton>
       </div>
 
@@ -292,9 +297,16 @@ const GalleryManagement = () => {
                 : 'Upload your first images to get started'
               }
             </p>
-            <Button onClick={() => setShowUploadModal(true)}>
+            <AnimatedButton 
+              className="btn-primary relative overflow-hidden group"
+              variant="primary"
+              size="lg"
+              hoverEffect={true}
+              fullWidth={false}
+              onClick={() => setShowUploadModal(true)}
+            >
               Upload Images
-            </Button>
+            </AnimatedButton>
           </CardContent>
         </Card>
       )}
