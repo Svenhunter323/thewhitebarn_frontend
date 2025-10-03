@@ -1,105 +1,152 @@
 import { motion } from 'framer-motion';
-import { FaCertificate, FaShieldAlt, FaCheckCircle, FaDownload } from 'react-icons/fa';
+import { FaCertificate, FaExternalLinkAlt, FaDownload, FaFileAlt } from 'react-icons/fa';
+import AnimatedButton from '../components/ui/AnimatedButton';
 
 const Licenses = () => {
+  // Actual licenses and certificates from the original PHP project
   const licenses = [
     {
-      title: 'Business License',
-      issuer: 'Broward County',
-      number: 'BL-2024-001234',
-      expiry: 'December 31, 2024',
-      status: 'Active',
-      description: 'Official business license for event venue operations'
+      title: 'AMERICAN MARRIAGE MINISTRIES GEORGINA CERTIFICATE',
+      logo: '/images/licensespdf/AMERICAN-MARRIAGE-logo.jpg',
+      pdfUrl: '/images/licensespdf/AMERICAN-MARRIAGE-MINISTRIES-GEORGINA-CERTIFICATE.pdf',
+      type: 'certificate'
     },
     {
-      title: 'Food Service License',
-      issuer: 'Florida Department of Health',
-      number: 'FS-FL-567890',
-      expiry: 'June 30, 2025',
-      status: 'Active',
-      description: 'Permits food service and catering operations'
+      title: 'AMERICAN MARRIAGE MINISTRIES MIGUEL CERTIFICATE',
+      logo: '/images/licensespdf/AMERICAN-MARRIAGE-logo.jpg',
+      pdfUrl: '/images/licensespdf/AMERICAN-MARRIAGE-MINISTRIES-MIGUEL-CERTIFICATE.pdf',
+      type: 'certificate'
     },
     {
-      title: 'Liquor License',
-      issuer: 'Florida Division of Alcoholic Beverages',
-      number: 'LL-2024-789012',
-      expiry: 'March 15, 2025',
-      status: 'Active',
-      description: 'Allows service of alcoholic beverages at events'
+      title: 'Florida Department of Agriculture and Consumer Services',
+      logo: '/images/licensespdf/FDACS-logo.jpg',
+      pdfUrl: '/images/licensespdf/FDACS-NOTICE-OF-INTENT-FOR-THE-BMP.pdf',
+      type: 'certificate'
     },
     {
-      title: 'Fire Safety Certificate',
-      issuer: 'Broward County Fire Department',
-      number: 'FS-BC-345678',
-      expiry: 'September 30, 2024',
-      status: 'Active',
-      description: 'Certifies compliance with fire safety regulations'
+      title: 'Sales Tax Certificate - Cielo Farms 2024',
+      logo: '/images/licensespdf/fdor-logo.jpg',
+      pdfUrl: '/images/licensespdf/SALES-TAX-CERTIFICATE-CIELO-FARMS-2024.pdf',
+      type: 'certificate'
     },
     {
-      title: 'Occupancy Permit',
-      issuer: 'City of Southwest Ranches',
-      number: 'OP-SWR-901234',
-      expiry: 'December 31, 2024',
-      status: 'Active',
-      description: 'Permits occupancy for up to 200 guests'
+      title: 'Florida Agritourism Association',
+      logo: '/images/licensespdf/flroidaagritourismassociation-logo.jpg',
+      pdfUrl: '/images/licensespdf/FLORIDA-AGRITOURISM-ASSOCIATION-LETTER-OR-ACKNOWLEDGEMENT.pdf',
+      type: 'certificate'
     },
     {
-      title: 'Environmental Compliance',
-      issuer: 'Florida Department of Environmental Protection',
-      number: 'EC-FL-456789',
-      expiry: 'August 31, 2025',
-      status: 'Active',
-      description: 'Environmental compliance for outdoor events'
+      title: 'Visit Florida Farms ORG',
+      logo: '/images/licensespdf/floridaagritourismass-logo.jpg',
+      pdfUrl: 'https://visitfloridafarms.org/activities/farm-nursery-ranch/#!biz/id/63bd338d58eacf12d44c2481',
+      type: 'external'
+    },
+    {
+      title: 'FDACS Notice',
+      logo: '/images/licensespdf/FDACS-logo.jpg',
+      pdfUrl: '/images/licensespdf/FDACS-NOTICE-OF-INTENT-FOR-THE-BMP.pdf',
+      type: 'certificate'
+    },
+    {
+      title: 'CIELO FARMS LLC BUSINESS TAX RECEIPT',
+      logo: '/images/licensespdf/cielofarms-logo.jpg',
+      pdfUrl: '/images/licensespdf/CIELO-FARMS-LLC-BUSINESS-TAX-RECEIPT.pdf',
+      type: 'certificate'
+    },
+    {
+      title: 'Florida Farm Bureau New Membership',
+      logo: '/images/licensespdf/membership-logo.jpg',
+      pdfUrl: '/images/licensespdf/FLORIDA-FARM-BUREAU-NEW-MEMBERSHIP-CARD-2024.pdf',
+      type: 'certificate'
+    },
+    {
+      title: 'FAA Membership White Barn FL',
+      logo: '/images/licensespdf/floridaagritourismass-logo.jpg',
+      pdfUrl: 'https://visitfloridafarms.org/activities/farm-nursery-ranch/#!biz/id/63bd338d58eacf12d44c2481',
+      type: 'external'
+    },
+    {
+      title: 'CERTIFICATE OF NURSERY REGISTRATION',
+      logo: '/images/licensespdf/FDACS-logo.jpg',
+      pdfUrl: '/images/licensespdf/CERTIFICATE-OF-NURSERY-REGISTRATION-FROM-JULY-2023-TO-2024.pdf',
+      type: 'certificate'
+    },
+    {
+      title: 'CERTIFICATE OF USE TOWN',
+      logo: '/images/licensespdf/cielofarms-logo.jpg',
+      pdfUrl: '/images/licensespdf/CERTIFICATE-OF-USE-TOWN-OF-SOUTHWEST-RANCHES-2021-060223-Medina-Letter.pdf',
+      type: 'certificate'
+    },
+    {
+      title: 'BUSINESS TAX RECEIPT',
+      logo: '/images/licensespdf/cielofarms-logo.jpg',
+      pdfUrl: '/images/licensespdf/CIELO-FARMS-LLC-BUSINESS-TAX-RECEIPT.pdf',
+      type: 'certificate'
+    },
+    {
+      title: 'CERTIFICATE OF NURSERY REGISTRATION',
+      logo: '/images/licensespdf/FDACS-logo.jpg',
+      pdfUrl: '/images/licensespdf/CIELO-FARMS-LLC-NURSERY-REGISTRATION-JULY-2024.pdf',
+      type: 'certificate'
+    },
+    {
+      title: 'FDACS NOTICE OF INTENT',
+      logo: '/images/licensespdf/FDACS-logo.jpg',
+      pdfUrl: '/images/licensespdf/FDACS-NOTICE-OF-INTENT-FOR-CIELO-FARMS-LLC-FROM-BMP.pdf',
+      type: 'certificate'
+    },
+    {
+      title: 'LAST NURSERY INSPECTION',
+      logo: '/images/licensespdf/FDACS-logo.jpg',
+      pdfUrl: '/images/licensespdf/LAST-NURSERY-INSPECTION-AT-CIELO-FARMS.pdf',
+      type: 'certificate'
+    },
+    {
+      title: 'FDACS STEVEN HALL',
+      logo: '/images/licensespdf/FDACS-logo.jpg',
+      pdfUrl: '/images/licensespdf/LETTER-FROM-FDACS-STEVEN-HALL.pdf',
+      type: 'certificate'
+    },
+    {
+      title: 'SHEEP FDACS Premise ID',
+      logo: '/images/licensespdf/cielofarms-logo.jpg',
+      pdfUrl: '/images/licensespdf/PREMISE-CARD.pdf',
+      type: 'certificate'
+    },
+    {
+      title: 'VALUE ADJUSTMENT BOARD REMAND TO PROPERTY APPRAISERS',
+      logo: '/images/licensespdf/fdor-logo.jpg',
+      pdfUrl: '/images/licensespdf/VALUE-ADJUSTMENT-BOARD-REMAND-TO-PROPERTY-APPRAISERS.pdf',
+      type: 'certificate'
     }
   ];
 
-  const certifications = [
-    {
-      title: 'Wedding Planning Professional',
-      organization: 'International Association of Wedding Professionals',
-      year: '2023',
-      icon: FaCertificate
-    },
-    {
-      title: 'Event Safety Management',
-      organization: 'Event Safety Alliance',
-      year: '2024',
-      icon: FaShieldAlt
-    },
-    {
-      title: 'Sustainable Event Practices',
-      organization: 'Green Event Certification',
-      year: '2023',
-      icon: FaCheckCircle
+  const handleCertificateClick = (license) => {
+    if (license.type === 'external') {
+      window.open(license.pdfUrl, '_blank');
+    } else {
+      window.open(license.pdfUrl, '_blank');
     }
-  ];
-
-  const insurancePolicies = [
-    {
-      type: 'General Liability Insurance',
-      provider: 'ABC Insurance Company',
-      coverage: '$2,000,000',
-      expiry: 'January 31, 2025'
-    },
-    {
-      type: 'Property Insurance',
-      provider: 'XYZ Insurance Group',
-      coverage: '$1,500,000',
-      expiry: 'March 15, 2025'
-    },
-    {
-      type: 'Liquor Liability Insurance',
-      provider: 'DEF Insurance Services',
-      coverage: '$1,000,000',
-      expiry: 'June 30, 2025'
-    }
-  ];
+  };
 
   return (
-    <div className="pt-20">
-      {/* Page Title */}
-      <section className="py-16 bg-gradient-to-r from-primary-500 to-secondary-500 text-white">
-        <div className="container-custom text-center">
+    <div className="">
+      {/* Page Title Section */}
+      <section className="relative py-24 text-black overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: 'url("/images/background/page-title-bg.png")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent z-100"></div>
+        </div>
+        
+        <div className="container-custom text-center relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -113,220 +160,133 @@ const Licenses = () => {
             transition={{ delay: 0.2 }}
             className="flex justify-center items-center space-x-2 text-lg"
           >
-            <a href="/" className="hover:text-primary-200 transition-colors">Home</a>
+            <a href="/" className="hover:text-red-500 transition-colors">Home</a>
             <span>/</span>
             <span>Licenses & Accreditations</span>
           </motion.nav>
         </div>
       </section>
 
-      {/* Introduction */}
+      {/* Licenses and Certificates Grid */}
       <section className="section-padding">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
-          >
-            <h2 className="heading-secondary mb-6">Your Peace of Mind is Our Priority</h2>
-            <p className="text-body max-w-3xl mx-auto">
-              At The White Barn FL, we maintain all necessary licenses, certifications, and insurance 
-              to ensure your event is safe, legal, and worry-free. Our commitment to compliance and 
-              professional standards gives you confidence in choosing us for your special day.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Licenses Grid */}
-      <section className="section-padding bg-gray-50">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <h2 className="heading-secondary mb-4">Current Licenses & Permits</h2>
-            <p className="text-body max-w-2xl mx-auto">
-              All our licenses are current and regularly renewed to ensure continuous compliance.
+            <h2 className="heading-secondary mb-4">Our Official Licenses & Certifications</h2>
+            <p className="text-body max-w-3xl mx-auto">
+              The White Barn FL maintains all necessary licenses, permits, and certifications 
+              to operate as a premier wedding and event venue. Click on any certificate below 
+              to view the official documentation.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {licenses.map((license, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow"
+                className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer"
+                onClick={() => handleCertificateClick(license)}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                    <FaCertificate className="text-primary-500 text-xl" />
+                <div className="p-6">
+                  {/* Logo */}
+                  <div className="flex justify-center mb-4">
+                    <div className="w-20 h-20 flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden">
+                      <img
+                        src={license.logo}
+                        alt={license.title}
+                        className="max-w-full max-h-full object-contain"
+                        onError={(e) => {
+                          e.target.src = '/images/licensespdf/FDACS-logo.jpg'; // Fallback logo
+                        }}
+                      />
+                    </div>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    license.status === 'Active' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {license.status}
-                  </span>
+
+                  {/* Title */}
+                  <h3 className="text-lg font-semibold text-center mb-4 text-gray-900 group-hover:text-primary-600 transition-colors">
+                    {license.title}
+                  </h3>
+
+                  {/* Action Button */}
+                  <div className="text-center">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 rounded-full text-sm font-medium group-hover:bg-primary-100 transition-colors">
+                      {license.type === 'external' ? (
+                        <>
+                          <FaExternalLinkAlt className="text-xs" />
+                          <span>Click Here</span>
+                        </>
+                      ) : (
+                        <>
+                          <FaFileAlt className="text-xs" />
+                          <span>View Certificate</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                
-                <h3 className="text-lg font-semibold mb-2 text-gray-900">
-                  {license.title}
-                </h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  {license.description}
-                </p>
-                
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Issuer:</span>
-                    <span className="text-gray-900">{license.issuer}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Number:</span>
-                    <span className="text-gray-900 font-mono">{license.number}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Expires:</span>
-                    <span className="text-gray-900">{license.expiry}</span>
-                  </div>
-                </div>
-                
-                <button className="mt-4 w-full flex items-center justify-center space-x-2 text-primary-500 hover:text-primary-600 transition-colors">
-                  <FaDownload size={14} />
-                  <span className="text-sm font-medium">View Certificate</span>
-                </button>
+
+                {/* Hover Effect */}
+                <div className="absolute inset-0 bg-primary-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Professional Certifications */}
-      <section className="section-padding">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <h2 className="heading-secondary mb-4">Professional Certifications</h2>
-            <p className="text-body max-w-2xl mx-auto">
-              Our team holds professional certifications that demonstrate our commitment to excellence.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {certifications.map((cert, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2 }}
-                className="text-center"
-              >
-                <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <cert.icon className="text-primary-500 text-2xl" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900">
-                  {cert.title}
-                </h3>
-                <p className="text-gray-600 mb-2">{cert.organization}</p>
-                <span className="inline-block px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
-                  {cert.year}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Insurance Coverage */}
+      {/* Trust and Compliance Section */}
       <section className="section-padding bg-gray-50">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            className="max-w-4xl mx-auto text-center"
           >
-            <h2 className="heading-secondary mb-4">Insurance Coverage</h2>
-            <p className="text-body max-w-2xl mx-auto">
-              Comprehensive insurance coverage protects your event and provides peace of mind.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {insurancePolicies.map((policy, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white p-6 rounded-lg shadow-lg"
-              >
-                <div className="w-12 h-12 bg-secondary-100 rounded-lg flex items-center justify-center mb-4">
-                  <FaShieldAlt className="text-secondary-500 text-xl" />
+            <div className="bg-white p-8 rounded-lg shadow-lg">
+              <FaCertificate className="text-primary-500 text-5xl mx-auto mb-6" />
+              <h2 className="text-3xl font-serif font-bold mb-6 text-gray-900">
+                Fully Licensed & Compliant
+              </h2>
+              <p className="text-body mb-6">
+                The White Barn FL operates under all required federal, state, and local licenses. 
+                Our venue is fully compliant with agricultural, business, tax, and safety regulations. 
+                We are proud members of the Florida Agritourism Association and maintain active 
+                certifications with the Florida Department of Agriculture and Consumer Services.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <FaCertificate className="text-green-600 text-2xl" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900 mb-2">FDACS Certified</h4>
+                  <p className="text-sm text-gray-600">Florida Department of Agriculture certified nursery and agritourism facility</p>
                 </div>
-                
-                <h3 className="text-lg font-semibold mb-3 text-gray-900">
-                  {policy.type}
-                </h3>
-                
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Provider:</span>
-                    <span className="text-gray-900">{policy.provider}</span>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <FaFileAlt className="text-blue-600 text-2xl" />
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Coverage:</span>
-                    <span className="text-gray-900 font-semibold">{policy.coverage}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Expires:</span>
-                    <span className="text-gray-900">{policy.expiry}</span>
-                  </div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Business Licensed</h4>
+                  <p className="text-sm text-gray-600">All business tax receipts and permits current and in good standing</p>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Compliance Statement */}
-      <section className="section-padding">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="bg-primary-50 p-8 rounded-lg text-center"
-          >
-            <FaCheckCircle className="text-primary-500 text-4xl mx-auto mb-4" />
-            <h2 className="text-2xl font-serif font-semibold mb-4 text-gray-900">
-              Fully Compliant & Insured
-            </h2>
-            <p className="text-body max-w-3xl mx-auto mb-6">
-              We are committed to maintaining the highest standards of safety, legality, and 
-              professionalism. All our licenses are current, our insurance is comprehensive, 
-              and our team is professionally certified. You can trust us to handle your event 
-              with complete compliance and care.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="btn-primary">
-                Request Documentation
-              </button>
-              <button className="btn-outline">
-                Contact Us
-              </button>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <FaExternalLinkAlt className="text-purple-600 text-2xl" />
+                  </div>
+                  <h4 className="font-semibold text-gray-900 mb-2">Association Member</h4>
+                  <p className="text-sm text-gray-600">Active member of Florida Agritourism Association and Farm Bureau</p>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Contact for Verification */}
+      {/* Call to Action */}
       <section className="section-padding bg-gray-900 text-white">
         <div className="container-custom text-center">
           <motion.div
@@ -335,19 +295,30 @@ const Licenses = () => {
             className="max-w-3xl mx-auto"
           >
             <h2 className="text-3xl lg:text-4xl font-serif font-bold mb-6">
-              Need to Verify Our Credentials?
+              Questions About Our Credentials?
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              We're happy to provide copies of any licenses or certificates for your records. 
-              Contact us for verification or if you have any questions about our compliance.
+              We're transparent about our licensing and happy to provide verification 
+              for any of our certifications. Contact us if you need official documentation 
+              for your records or have any compliance questions.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-medium transition-colors">
-                Request Documents
-              </button>
-              <button className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-lg font-medium transition-all">
-                Call Us
-              </button>
+              <AnimatedButton 
+                variant="primary" 
+                size="lg"
+                className="btn-primary relative overflow-hidden group"
+                onClick={() => window.location.href = '/contact'}
+              >
+                <span className="relative z-10">Contact Us</span>
+              </AnimatedButton>
+              <AnimatedButton 
+                variant="outline" 
+                size="lg"
+                className="btn-primary bg-white relative overflow-hidden group"
+                onClick={() => window.location.href = '/contact'}
+              >
+                <span className="relative z-10">Request Documentation</span>
+              </AnimatedButton>
             </div>
           </motion.div>
         </div>

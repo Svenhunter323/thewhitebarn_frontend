@@ -11,7 +11,7 @@ import {
   FaFilter,
   FaDownload
 } from 'react-icons/fa';
-import { Button } from '../../components/ui/Button';
+import AnimatedButton from '../../components/ui/AnimatedButton';
 import { Input } from '../../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import Modal from '../../components/ui/Modal';
@@ -138,13 +138,13 @@ const GalleryManagement = () => {
           <h1 className="text-2xl font-bold text-gray-900">Gallery Management</h1>
           <p className="text-gray-600">Manage your venue's photo gallery</p>
         </div>
-        <Button 
+        <AnimatedButton
           onClick={() => setShowUploadModal(true)}
           className="flex items-center gap-2"
         >
           <FaPlus className="w-4 h-4" />
           Upload Images
-        </Button>
+        </AnimatedButton>
       </div>
 
       {/* Stats */}
@@ -224,7 +224,7 @@ const GalleryManagement = () => {
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <div className="flex gap-2">
-                      <Button
+                      <AnimatedButton
                         size="sm"
                         variant="outline"
                         onClick={() => {
@@ -234,8 +234,8 @@ const GalleryManagement = () => {
                         className="bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
                       >
                         <FaEye className="w-4 h-4" />
-                      </Button>
-                      <Button
+                      </AnimatedButton>
+                      <AnimatedButton
                         size="sm"
                         variant="outline"
                         onClick={() => {
@@ -245,15 +245,15 @@ const GalleryManagement = () => {
                         className="bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
                       >
                         <FaEdit className="w-4 h-4" />
-                      </Button>
-                      <Button
+                      </AnimatedButton>
+                      <AnimatedButton
                         size="sm"
                         variant="outline"
                         onClick={() => handleDeleteImage(image._id)}
                         className="bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
                       >
                         <FaTrash className="w-4 h-4" />
-                      </Button>
+                      </AnimatedButton>
                     </div>
                   </div>
                   {image.featured && (

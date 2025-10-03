@@ -45,8 +45,10 @@ export default {
         }
       },
       fontFamily: {
-        'sans': ['Inter', 'ui-sans-serif', 'system-ui'],
-        'serif': ['Playfair Display', 'ui-serif', 'Georgia'],
+        'sans': ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        'serif': ['Cinzel', 'ui-serif', 'serif'],
+        'cinzel': ['Cinzel', 'serif'],
+        'manrope': ['Manrope', 'sans-serif'],
       },
       animation: {
         'bounce-slow': 'bounce 3s infinite',

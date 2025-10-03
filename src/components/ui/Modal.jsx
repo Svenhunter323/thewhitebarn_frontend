@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../utils/cn';
-import { Button } from './Button';
+import AnimatedButton from './AnimatedButton';
 
 const Modal = ({ 
   isOpen, 

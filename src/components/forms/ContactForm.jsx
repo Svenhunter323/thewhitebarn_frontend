@@ -1,199 +1,156 @@
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { Button } from '../ui/Button';
-import { Input } from '../ui/Input';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import toast from 'react-hot-toast';
-import apiService from '../../services/api';
+import ApiService from '../../services/api';
+import { useApiMutation } from '../../hooks/useApi';
 
-const ContactForm = ({ className = '' }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset
-  } = useForm({
-    defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: '',
-      eventDate: '',
-      eventType: 'wedding'
-    }
-  });
-
-  const eventTypes = [
-    { value: 'wedding', label: 'Wedding' },
-    { value: 'corporate', label: 'Corporate Event' },
-    { value: 'birthday', label: 'Birthday Party' },
-    { value: 'anniversary', label: 'Anniversary' },
-    { value: 'other', label: 'Other' }
-  ];
+const ContactForm = ({ isFooter = true }) => {
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { mutate, loading: isSubmitting } = useApiMutation();
 
   const onSubmit = async (data) => {
-    setIsSubmitting(true);
-    
     try {
-      await apiService.request('/contact', {
-        method: 'POST',
-        body: JSON.stringify(data)
-      });
-      
-      toast.success('Message sent successfully! We\'ll get back to you soon.');
+      await mutate(() => ApiService.submitContactForm(data));
+      toast.success('Message sent successfully! We will get back to you soon.');
       reset();
     } catch (error) {
-      toast.error(error.message || 'Failed to send message. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+      toast.error('Failed to send message. Please try again.');
+      console.error('Contact form error:', error);
     }
   };
 
+  const inputClasses = `w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 ${
+    isFooter ? 'bg-white/10 border-gray-600 text-white placeholder-gray-300' : 'bg-white'
+  }`;
+
+  const labelClasses = `block text-sm font-medium mb-2 ${
+    isFooter ? 'text-gray-300' : 'text-gray-700'
+  }`;
+
   return (
-    <Card className={`w-full max-w-2xl mx-auto ${className}`}>
-      <CardHeader>
-        <CardTitle className="text-2xl text-center text-gray-900">
-          Get In Touch
-        </CardTitle>
-        <p className="text-center text-gray-600">
-          Ready to plan your perfect event? Send us a message and we'll get back to you within 24 hours.
-        </p>
-      </CardHeader>
-      
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Personal Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Full Name"
-              required
-              {...register('name', {
-                required: 'Name is required',
-                minLength: {
-                  value: 2,
-                  message: 'Name must be at least 2 characters'
-                }
-              })}
-              error={errors.name?.message}
-              placeholder="Your full name"
-            />
-            
-            <Input
-              label="Email Address"
-              type="email"
-              required
-              {...register('email', {
-                required: 'Email is required',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Invalid email address'
-                }
-              })}
-              error={errors.email?.message}
-              placeholder="your.email@example.com"
-            />
-          </div>
+    <motion.form
+      onSubmit={handleSubmit(onSubmit)}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6"
+    >
+      <div className="grid md:grid-cols-2 gap-6">
+        <div>
+          <label className={labelClasses}>
+            Full Name *
+          </label>
+          <input
+            type="text"
+            {...register('name', { required: 'Name is required' })}
+            className={inputClasses}
+            placeholder="Enter your full name"
+          />
+          {errors.name && (
+            <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>
+          )}
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="Phone Number"
-              type="tel"
-              {...register('phone', {
-                pattern: {
-                  value: /^[\+]?[1-9][\d]{0,15}$/,
-                  message: 'Invalid phone number'
-                }
-              })}
-              error={errors.phone?.message}
-              placeholder="(555) 123-4567"
-            />
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium leading-none">
-                Event Date
-              </label>
-              <input
-                type="date"
-                {...register('eventDate')}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-            </div>
-          </div>
+        <div>
+          <label className={labelClasses}>
+            Email Address *
+          </label>
+          <input
+            type="email"
+            {...register('email', { 
+              required: 'Email is required',
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: 'Invalid email address'
+              }
+            })}
+            className={inputClasses}
+            placeholder="Enter your email"
+          />
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>
+          )}
+        </div>
+      </div>
 
-          {/* Event Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium leading-none">
-                Event Type
-              </label>
-              <select
-                {...register('eventType')}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {eventTypes.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <Input
-              label="Subject"
-              {...register('subject')}
-              error={errors.subject?.message}
-              placeholder="Brief subject of your inquiry"
-            />
-          </div>
+      <div>
+        <label className={labelClasses}>
+          Subject *
+        </label>
+        <input
+          type="text"
+          {...register('subject', { required: 'Subject is required' })}
+          className={inputClasses}
+          placeholder="What is your inquiry about?"
+        />
+        {errors.subject && (
+          <p className="mt-1 text-sm text-red-400">{errors.subject.message}</p>
+        )}
+      </div>
 
-          {/* Message */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium leading-none">
-              Message
-              <span className="text-red-500 ml-1">*</span>
+      {!isFooter && (
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <label className={labelClasses}>
+              Phone Number
             </label>
-            <textarea
-              {...register('message', {
-                required: 'Message is required',
-                minLength: {
-                  value: 10,
-                  message: 'Message must be at least 10 characters'
-                }
-              })}
-              rows={5}
-              className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
-              placeholder="Tell us about your event, guest count, specific requirements, or any questions you have..."
+            <input
+              type="tel"
+              {...register('phone')}
+              className={inputClasses}
+              placeholder="Enter your phone number"
             />
-            {errors.message && (
-              <p className="text-sm text-red-500">{errors.message.message}</p>
-            )}
           </div>
 
-          {/* Submit Button */}
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Button
-              type="submit"
-              loading={isSubmitting}
-              className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg"
-              size="lg"
-            >
-              {isSubmitting ? 'Sending Message...' : 'Send Message'}
-            </Button>
-          </motion.div>
+          <div>
+            <label className={labelClasses}>
+              Address
+            </label>
+            <input
+              type="text"
+              {...register('address')}
+              className={inputClasses}
+              placeholder="Enter your address"
+            />
+          </div>
+        </div>
+      )}
 
-          <p className="text-xs text-gray-500 text-center">
-            By submitting this form, you agree to our privacy policy and terms of service.
-          </p>
-        </form>
-      </CardContent>
-    </Card>
+      <div>
+        <label className={labelClasses}>
+          Message *
+        </label>
+        <textarea
+          {...register('message', { required: 'Message is required' })}
+          rows={5}
+          className={inputClasses}
+          placeholder="Tell us about your event..."
+        />
+        {errors.message && (
+          <p className="mt-1 text-sm text-red-400">{errors.message.message}</p>
+        )}
+      </div>
+
+      <motion.button
+        type="submit"
+        disabled={isSubmitting}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className={`btn-primary relative overflow-hidden group ${
+          isFooter 
+            ? 'bg-primary-500 hover:bg-primary-600 text-white' 
+            : 'btn-primary'
+        } disabled:opacity-50 disabled:cursor-not-allowed`}
+      >
+        {isSubmitting ? (
+          <div className="flex items-center justify-center space-x-2">
+            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            <span>Sending...</span>
+          </div>
+        ) : (
+          'Send Message'
+        )}
+      </motion.button>
+    </motion.form>
   );
 };
 

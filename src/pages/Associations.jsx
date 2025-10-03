@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { FaHeart, FaHandsHelping, FaLeaf, FaPaw } from 'react-icons/fa';
+import AnimatedButton from '../components/ui/AnimatedButton';
 
 const Associations = () => {
   const associations = [
@@ -83,10 +84,23 @@ const Associations = () => {
   ];
 
   return (
-    <div className="pt-20">
-      {/* Page Title */}
-      <section className="py-16 bg-gradient-to-r from-primary-500 to-secondary-500 text-white">
-        <div className="container-custom text-center">
+    <div className="">
+      {/* Page Title Section */}
+      <section className="relative py-24 text-black overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: 'url("/images/background/page-title-bg.png")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent z-100"></div>
+        </div>
+        
+        <div className="container-custom text-center relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -100,7 +114,7 @@ const Associations = () => {
             transition={{ delay: 0.2 }}
             className="flex justify-center items-center space-x-2 text-lg"
           >
-            <a href="/" className="hover:text-primary-200 transition-colors">Home</a>
+            <a href="/" className="hover:text-red-500 transition-colors">Home</a>
             <span>/</span>
             <span>Associations We Believe In</span>
           </motion.nav>
@@ -354,12 +368,22 @@ const Associations = () => {
                 partner organizations or help you support a cause that's close to your heart.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="btn-primary">
-                  Plan a Charity Event
-                </button>
-                <button className="btn-outline">
-                  Learn More
-                </button>
+                <AnimatedButton 
+                  variant="primary" 
+                  size="lg"
+                  className="btn-primary relative overflow-hidden group"
+                  // onClick={() => window.location.href = '/contact'}
+                >
+                  <span className="relative z-10">Plan a Charity Event</span>
+                </AnimatedButton>
+                <AnimatedButton 
+                  variant="secondary" 
+                  size="lg"
+                  className="btn-primary relative overflow-hidden group"
+                  // onClick={() => window.location.href = '/contact'}
+                >
+                  <span className="relative z-10">Learn More</span>
+                </AnimatedButton>
               </div>
             </motion.div>
           </div>
@@ -382,12 +406,22 @@ const Associations = () => {
               a positive impact. Contact us to learn how we can help you give back through your celebration.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-medium transition-colors">
-                Start Planning
-              </button>
-              <button className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-lg font-medium transition-all">
-                Contact Us
-              </button>
+              <AnimatedButton 
+                variant="primary" 
+                size="lg"
+                className="btn-primary relative overflow-hidden group"
+                onClick={() => window.location.href = '/contact'}
+              >
+                <span className="relative z-10">Start Planning</span>
+              </AnimatedButton>
+              <AnimatedButton 
+                variant="outline" 
+                size="lg"
+                className="btn-primary bg-white relative overflow-hidden group"
+                onClick={() => window.location.href = '/contact'}
+              >
+                <span className="relative z-10">Contact Us</span>
+              </AnimatedButton>
             </div>
           </motion.div>
         </div>

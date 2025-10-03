@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
-import ContactForm from '../components/ContactForm';
+import ContactForm from '../components/forms/ContactForm';
+import Map from '../components/map/Map';
 import ApiService from '../services/api';
 import { useApi } from '../hooks/useApi';
 
@@ -71,10 +72,23 @@ const Contact = () => {
   ] : fallbackContactInfo;
 
   return (
-    <div className="pt-20">
-      {/* Page Title */}
-      <section className="py-16 bg-gradient-to-r from-primary-500 to-secondary-500 text-white">
-        <div className="container-custom text-center">
+    <div className="">
+      {/* Page Title Section */}
+      <section className="relative py-24 text-black overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: 'url("/images/background/page-title-bg.png")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent z-100"></div>
+        </div>
+        
+        <div className="container-custom text-center relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -88,7 +102,7 @@ const Contact = () => {
             transition={{ delay: 0.2 }}
             className="flex justify-center items-center space-x-2 text-lg"
           >
-            <a href="/" className="hover:text-primary-200 transition-colors">Home</a>
+            <a href="/" className="hover:text-red-500 transition-colors">Home</a>
             <span>/</span>
             <span>Contact Us</span>
           </motion.nav>
@@ -173,14 +187,8 @@ const Contact = () => {
               transition={{ duration: 0.8 }}
               className="space-y-8"
             >
-              {/* Map Placeholder */}
-              <div className="bg-gray-200 rounded-lg overflow-hidden h-64 flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <FaMapMarkerAlt className="text-4xl mb-2 mx-auto" />
-                  <p>Interactive Map</p>
-                  <p className="text-sm">4680 SW 148th Ave, Fort Lauderdale, FL 33330</p>
-                </div>
-              </div>
+              {/* Interactive Map */}
+              <Map address="4680 SW 148th Ave, Fort Lauderdale, FL 33330" />
 
               {/* Additional Information */}
               <div className="bg-primary-50 p-6 rounded-lg">
@@ -218,6 +226,80 @@ const Contact = () => {
                   (561) 376-2855
                 </a>
               </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Location & Directions Section */}
+      <section className="section-padding bg-white">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-center mb-16"
+          >
+            <h2 className="heading-secondary mb-4">Visit Our Venue</h2>
+            <p className="text-body max-w-2xl mx-auto">
+              Located in the heart of Fort Lauderdale, The White Barn FL offers easy access 
+              and beautiful surroundings for your special event.
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
+            {/* Address Information */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="space-y-6"
+            >
+              <div className="bg-gray-50 p-8 rounded-lg">
+                <h3 className="text-2xl font-serif font-semibold mb-6 text-gray-900">
+                  Our Address
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4">
+                    <FaMapMarkerAlt className="text-primary-500 text-xl mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-lg font-medium text-gray-900">The White Barn FL</p>
+                      <p className="text-gray-600">4680 SW 148th Ave</p>
+                      <p className="text-gray-600">Fort Lauderdale, FL 33330</p>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t pt-4 mt-6">
+                    <h4 className="font-semibold text-gray-900 mb-3">Getting Here</h4>
+                    <ul className="space-y-2 text-gray-600">
+                      <li>• 15 minutes from Fort Lauderdale Airport</li>
+                      <li>• Easy access from I-595 and Florida's Turnpike</li>
+                      <li>• Ample free parking available on-site</li>
+                      <li>• Wheelchair accessible entrance and facilities</li>
+                    </ul>
+                  </div>
+
+                  <div className="border-t pt-4 mt-6">
+                    <h4 className="font-semibold text-gray-900 mb-3">Nearby Landmarks</h4>
+                    <ul className="space-y-2 text-gray-600">
+                      <li>• Flamingo Gardens (10 min)</li>
+                      <li>• Davie Town Center (8 min)</li>
+                      <li>• Sawgrass Mills Mall (15 min)</li>
+                      <li>• Las Olas Boulevard (30 min)</li>
+                      <li>• Downtown Fort Lauderdale (25 min)</li>
+                      <li>• Southwest Ranches (15 min)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Large Map */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <Map address="4680 SW 148th Ave, Fort Lauderdale, FL 33330" />
             </motion.div>
           </div>
         </div>

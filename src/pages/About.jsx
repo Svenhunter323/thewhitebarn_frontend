@@ -1,11 +1,25 @@
 import { motion } from 'framer-motion';
+import AnimatedButton from '../components/ui/AnimatedButton';
 
 const About = () => {
   return (
-    <div className="pt-20">
+    <div className="">
       {/* Page Title */}
-      <section className="py-16 bg-gradient-to-r from-primary-500 to-secondary-500 text-white">
-        <div className="container-custom text-center">
+      <section className="relative py-24 text-black overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: 'url("/images/background/page-title-bg.png")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent z-100"></div>
+        </div>
+        
+        <div className="container-custom text-center relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -19,7 +33,7 @@ const About = () => {
             transition={{ delay: 0.2 }}
             className="flex justify-center items-center space-x-2 text-lg"
           >
-            <a href="/" className="hover:text-primary-200 transition-colors">Home</a>
+            <a href="/" className="hover:text-red-500 transition-colors">Home</a>
             <span>/</span>
             <span>About Us</span>
           </motion.nav>
@@ -37,7 +51,7 @@ const About = () => {
               transition={{ duration: 0.8 }}
               className="lg:col-span-1"
             >
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              <div className="bg-white shadow-lg overflow-hidden">
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
                     src="/images/event-1.jpg"
@@ -54,9 +68,16 @@ const About = () => {
                     is unique and enchanting, providing visitors with unforgettable experiences 
                     in a beautifully serene setting.
                   </p>
-                  <button className="btn-primary">
-                    Get In Touch
-                  </button>
+
+                  <AnimatedButton
+                    className="btn-primary relative overflow-hidden group"
+                    variant="primary"
+                    size="lg"
+                    hoverEffect={true}
+                    fullWidth={false}
+                  >
+                    <span className="relative z-10">Get In Touch</span>
+                  </AnimatedButton>
                 </div>
               </div>
             </motion.div>
@@ -162,12 +183,24 @@ const About = () => {
                     and bustle of city life.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <button className="btn-primary">
-                      Schedule a Tour
-                    </button>
-                    <button className="btn-outline">
-                      Contact Us
-                    </button>
+                    <AnimatedButton
+                      className="btn-primary relative overflow-hidden group"
+                      variant="primary"
+                      size="lg"
+                      hoverEffect={true}
+                      fullWidth={false}
+                    >
+                      <span className="relative z-10">Schedule a Tour</span>
+                    </AnimatedButton>
+                    <AnimatedButton
+                      className="btn-primary relative overflow-hidden group"
+                      variant="outline"
+                      size="lg"
+                      hoverEffect={true}
+                      fullWidth={false}
+                    >
+                    <span className="relative z-10">Contact Us</span>
+                    </AnimatedButton>
                   </div>
                 </div>
               </div>
@@ -192,12 +225,25 @@ const About = () => {
               Contact us today to schedule a consultation and tour.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-medium transition-colors">
-                Book Consultation
-              </button>
-              <button className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-lg font-medium transition-all">
-                View Gallery
-              </button>
+
+              <AnimatedButton
+                className="btn-primary relative overflow-hidden group"
+                variant="primary"
+                size="lg"
+                hoverEffect={true}
+                fullWidth={false}
+              >
+                <span className="relative z-10">Book Consultation</span>
+              </AnimatedButton>
+              <AnimatedButton
+                className="btn-primary bg-white relative overflow-hidden group"
+                variant="outline"
+                size="lg"
+                hoverEffect={true}
+                fullWidth={false}
+              >
+              <span className="relative z-10">View Gallery</span>
+              </AnimatedButton>
             </div>
           </motion.div>
         </div>

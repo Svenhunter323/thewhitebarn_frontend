@@ -9,7 +9,7 @@ import {
   FaEye,
   FaUndo
 } from 'react-icons/fa';
-import { Button } from '../../components/ui/Button';
+import AnimatedButton from '../../components/ui/AnimatedButton';
 import { Input } from '../../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
@@ -88,7 +88,7 @@ const ContentManagement = () => {
         </div>
         <div className="flex gap-3">
           {hasChanges && (
-            <Button
+            <AnimatedButton
               variant="outline"
               onClick={() => {
                 fetchContent();
@@ -98,7 +98,7 @@ const ContentManagement = () => {
             >
               <FaUndo className="w-4 h-4" />
               Reset Changes
-            </Button>
+            </AnimatedButton>
           )}
           <Button
             onClick={handleSave}

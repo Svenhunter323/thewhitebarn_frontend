@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaPlay, FaTimes } from 'react-icons/fa';
+import AnimatedButton from '../components/ui/AnimatedButton';
 
 const VideoGallery = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -60,16 +61,29 @@ const VideoGallery = () => {
   };
 
   return (
-    <div className="pt-20">
+    <div className="">
       {/* Page Title */}
-      <section className="py-16 bg-gradient-to-r from-primary-500 to-secondary-500 text-white">
-        <div className="container-custom text-center">
+      <section className="relative py-24 text-black overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: 'url("/images/background/page-title-bg.png")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-white to-transparent z-100"></div>
+        </div>
+        
+        <div className="container-custom text-center relative z-10">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl lg:text-5xl font-serif font-bold mb-4"
           >
-            Video Gallery
+            Videos Gallery
           </motion.h1>
           <motion.nav
             initial={{ opacity: 0, y: 30 }}
@@ -77,9 +91,9 @@ const VideoGallery = () => {
             transition={{ delay: 0.2 }}
             className="flex justify-center items-center space-x-2 text-lg"
           >
-            <a href="/" className="hover:text-primary-200 transition-colors">Home</a>
+            <a href="/" className="hover:text-red-500 transition-colors">Home</a>
             <span>/</span>
-            <span>Videos</span>
+            <span>Videos Gallery</span>
           </motion.nav>
         </div>
       </section>
@@ -273,12 +287,24 @@ const VideoGallery = () => {
               Schedule a visit to experience our venue in person and discuss how we can make your event unforgettable.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-medium transition-colors">
-                Book a Tour
-              </button>
-              <button className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-lg font-medium transition-all">
-                Get Quote
-              </button>
+              <AnimatedButton
+                className="btn-primary relative overflow-hidden group"
+                variant="primary"
+                size="lg"
+                hoverEffect={true}
+                fullWidth={false}
+              >
+                <span className="relative z-10">Book a Tour</span>
+              </AnimatedButton>
+              <AnimatedButton
+                className="btn-primary bg-white relative overflow-hidden group"
+                variant="outline"
+                size="lg"
+                hoverEffect={true}
+                fullWidth={false}
+              >
+              <span className="relative z-10">Get Quote</span>
+              </AnimatedButton>
             </div>
           </motion.div>
         </div>

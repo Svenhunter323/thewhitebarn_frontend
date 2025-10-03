@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -66,7 +66,20 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200;
+    @apply relative overflow-hidden bg-primary-500 text-white px-6 py-3 rounded-[1.5rem] font-medium transition-all duration-300;
+  }
+  
+  .btn-primary::before {
+    content: '';
+    @apply absolute top-0 left-0 w-0 h-full bg-primary-600 transition-all duration-300 -z-10;
+  }
+  
+  .btn-primary:hover {
+    @apply text-white;
+  }
+  
+  .btn-primary:hover::before {
+    @apply w-full;
   }
   
   .btn-secondary {
@@ -78,7 +91,7 @@
   }
   
   .section-padding {
-    @apply py-16 lg:py-24;
+    @apply py-12 lg:py-12;
   }
   
   .container-custom {
@@ -118,4 +131,92 @@
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Marquee Styles */
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  min-height: 80px; /* Increased height */
+  display: flex;
+  align-items: center;
+}
+
+.marquee-content {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 40s linear infinite;
+  padding: 20px 0; /* Increased padding */
+}
+
+.marquee-group {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.marquee-item {
+  display: flex;
+  align-items: center;
+  margin: 0 15px;
+}
+
+.marquee-text {
+  color: #1a202c; /* gray-900 */
+  font-family: 'Cinzel', serif;
+  font-size: 2rem; /* text-2xl */
+  font-weight: 600; /* font-semibold */
+  letter-spacing: 0.5px;
+  text-transform: none; /* Remove uppercase for title case */
+  white-space: nowrap;
+  line-height: 1.2;
+  margin: 0 0.75rem; /* Add horizontal spacing between items */
+}
+
+.marquee-divider {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 104px;
+  margin: 0 10px;
+  background-image: url('/images/icons/icon-leaves-37.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 1;
+  transition: transform 0.3s ease;
+}
+
+.marquee-divider::before {
+  content: '•';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #d67a4b;
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.marquee-divider:hover {
+  transform: rotate(15deg);
+  opacity: 1;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Pause on hover */
+.marquee-container:hover .marquee-content {
+  animation-play-state: paused;
 }

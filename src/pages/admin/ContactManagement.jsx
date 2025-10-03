@@ -11,10 +11,11 @@ import {
   FaClock,
   FaUser,
   FaPhone,
-  FaCalendarAlt
+  FaCalendarAlt,
+  FaCheck
 } from 'react-icons/fa';
 import { format } from 'date-fns';
-import { Button } from '../../components/ui/Button';
+import AnimatedButton from '../../components/ui/AnimatedButton';
 import { Input } from '../../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import Modal from '../../components/ui/Modal';
@@ -57,7 +58,7 @@ const ContactManagement = () => {
   const handleViewDetails = (contact) => {
     setSelectedContact(contact);
     setShowDetailsModal(true);
-    markAsRead(contact._id);
+    handleMarkAsRead(contact._id);
   };
 
   const handleReply = (contact) => {
@@ -66,22 +67,6 @@ const ContactManagement = () => {
     setShowReplyModal(true);
   };
 
-  const markAsRead = async (contactId) => {
-    try {
-      await apiService.request(`/admin/contacts/${contactId}/read`, {
-        method: 'PATCH'
-      });
-      setContacts(prev => 
-        prev.map(contact => 
-          contact._id === contactId 
-            ? { ...contact, status: 'read' }
-            : contact
-        )
-      );
-    } catch (error) {
-      console.error('Error marking as read:', error);
-    }
-  };
 
   const handleDelete = async (contactId) => {
     if (!window.confirm('Are you sure you want to delete this contact?')) return;
@@ -95,6 +80,25 @@ const ContactManagement = () => {
     } catch (error) {
       toast.error('Failed to delete contact');
       console.error('Error deleting contact:', error);
+    }
+  };
+
+  const handleMarkAsRead = async (contactId) => {
+    try {
+      await apiService.request(`/admin/contacts/${contactId}/read`, {
+        method: 'PATCH'
+      });
+      setContacts(prev => 
+        prev.map(contact => 
+          contact._id === contactId 
+            ? { ...contact, status: 'read' }
+            : contact
+        )
+      );
+      toast.success('Contact marked as read');
+    } catch (error) {
+      toast.error('Failed to mark as read');
+      console.error('Error marking as read:', error);
     }
   };
 
@@ -211,13 +215,15 @@ const ContactManagement = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Contact Management</h1>
+        </div>
+        <div>
           <p className="text-gray-600">Manage and respond to customer inquiries</p>
         </div>
         <div className="flex gap-3">
-          <Button onClick={exportContacts} variant="outline" className="flex items-center gap-2">
+          <AnimatedButton onClick={exportContacts} variant="outline" className="flex items-center gap-2">
             <FaDownload className="w-4 h-4" />
             Export CSV
-          </Button>
+          </AnimatedButton>
         </div>
       </div>
 
@@ -254,7 +260,7 @@ const ContactManagement = () => {
       <Card>
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
+            <div className="flex-1 relative">
               <Input
                 placeholder="Search contacts..."
                 value={searchTerm}
@@ -351,16 +357,19 @@ const ContactManagement = () => {
                     </div>
                     
                     <div className="flex items-center gap-2 ml-4">
-                      <Button
+                      <AnimatedButton
                         variant="outline"
                         size="sm"
-                        onClick={() => handleViewDetails(contact)}
+                        onClick={() => {
+                          setSelectedContact(contact);
+                          setShowDetailsModal(true);
+                        }}
                         className="flex items-center gap-2"
                       >
                         <FaEye className="w-4 h-4" />
                         View
-                      </Button>
-                      <Button
+                      </AnimatedButton>
+                      <AnimatedButton
                         variant="outline"
                         size="sm"
                         onClick={() => handleReply(contact)}
@@ -368,15 +377,18 @@ const ContactManagement = () => {
                       >
                         <FaReply className="w-4 h-4" />
                         Reply
-                      </Button>
-                      <Button
+                      </AnimatedButton>
+                      <AnimatedButton
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDelete(contact._id)}
-                        className="flex items-center gap-2 text-red-600 hover:text-red-700"
+                        onClick={() => handleMarkAsRead(contact._id)}
+                        className="flex items-center gap-2 text-green-600 hover:text-green-700"
+                        disabled={contact.status === 'read'}
+                        hoverEffect={false}
                       >
-                        <FaTrash className="w-4 h-4" />
-                      </Button>
+                        <FaCheck className="w-4 h-4" />
+                        Mark as Read
+                      </AnimatedButton>
                     </div>
                   </div>
                 </CardContent>
@@ -384,32 +396,84 @@ const ContactManagement = () => {
             </motion.div>
           ))}
         </AnimatePresence>
-        
-        {filteredContacts.length === 0 && (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <FaEnvelope className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No contacts found</h3>
-              <p className="text-gray-500">
-                {searchTerm || statusFilter !== 'all' || dateFilter !== 'all'
-                  ? 'Try adjusting your search criteria'
-                  : 'No contact submissions yet'
-                }
-              </p>
-            </CardContent>
-          </Card>
-        )}
       </div>
-
-      {/* Contact Details Modal */}
+      
+      {/* Contact List */}
+      <div className="space-y-4">
+        <AnimatePresence>
+          {filteredContacts.map((contact) => (
+            <motion.div
+              key={contact._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="w-full"
+            >
+              <Card className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full ${getStatusColor(contact.status)}`}></div>
+                        <h3 className="font-medium text-gray-900 truncate">{contact.name}</h3>
+                        <span className={`px-2 py-0.5 text-xs rounded-full ${getPriorityColor(contact.eventType)}`}>
+                          {contact.eventType || 'General'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-500 truncate">{contact.email}</p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {format(new Date(contact.createdAt), 'MMM d, yyyy h:mm a')}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <AnimatedButton
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewDetails(contact)}
+                        className="flex items-center gap-2"
+                      >
+                        <FaEye className="w-4 h-4" />
+                        View
+                      </AnimatedButton>
+                      <AnimatedButton
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleReply(contact)}
+                        className="flex items-center gap-2"
+                      >
+                        <FaReply className="w-4 h-4" />
+                        Reply
+                      </AnimatedButton>
+                      <AnimatedButton
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleMarkAsRead(contact._id)}
+                        className="flex items-center gap-2 text-green-600 hover:text-green-700"
+                        disabled={contact.status === 'read'}
+                        hoverEffect={false}
+                      >
+                        <FaCheck className="w-4 h-4" />
+                        Mark as Read
+                      </AnimatedButton>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+      
+      {/* Details Modal */}
       <Modal
         isOpen={showDetailsModal}
         onClose={() => setShowDetailsModal(false)}
-        title="Contact Details"
+        title={`Contact Details - ${selectedContact?.name}`}
         size="lg"
       >
         {selectedContact && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
@@ -434,12 +498,14 @@ const ContactManagement = () => {
               {selectedContact.eventDate && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Event Date</label>
-                  <p className="text-gray-900">{format(new Date(selectedContact.eventDate), 'MMMM dd, yyyy')}</p>
+                  <p className="text-gray-900">{format(new Date(selectedContact.eventDate), 'MMM dd, yyyy')}</p>
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Submitted</label>
-                <p className="text-gray-900">{format(new Date(selectedContact.createdAt), 'MMMM dd, yyyy HH:mm')}</p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedContact.status)}`}>
+                  {selectedContact.status || 'unread'}
+                </span>
               </div>
             </div>
             
@@ -453,23 +519,27 @@ const ContactManagement = () => {
             {selectedContact.message && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="bg-gray-50 p-4 rounded-md">
                   <p className="text-gray-900 whitespace-pre-wrap">{selectedContact.message}</p>
                 </div>
               </div>
             )}
             
             <div className="flex gap-3 pt-4 border-t">
-              <Button onClick={() => handleReply(selectedContact)} className="flex items-center gap-2">
+              <AnimatedButton
+                onClick={() => handleReply(selectedContact)}
+                className="flex items-center gap-2"
+              >
                 <FaReply className="w-4 h-4" />
                 Reply
-              </Button>
-              <Button 
-                variant="outline" 
+              </AnimatedButton>
+              <AnimatedButton
+                variant="outline"
                 onClick={() => setShowDetailsModal(false)}
+                className="mt-4 sm:mt-0 w-full sm:w-auto"
               >
                 Close
-              </Button>
+              </AnimatedButton>
             </div>
           </div>
         )}
@@ -503,21 +573,21 @@ const ContactManagement = () => {
           </Alert>
           
           <div className="flex gap-3 pt-4 border-t">
-            <Button 
+            <AnimatedButton 
               onClick={handleSendReply} 
               loading={replying}
               className="flex items-center gap-2"
             >
               <FaReply className="w-4 h-4" />
               Send Reply
-            </Button>
-            <Button 
+            </AnimatedButton>
+            <AnimatedButton 
               variant="outline" 
               onClick={() => setShowReplyModal(false)}
               disabled={replying}
             >
               Cancel
-            </Button>
+            </AnimatedButton>
           </div>
         </div>
       </Modal>

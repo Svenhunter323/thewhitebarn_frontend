@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../ui/Button';
+import AnimatedButton from '../ui/AnimatedButton';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 
 class ErrorBoundary extends React.Component {
@@ -85,28 +85,30 @@ class ErrorBoundary extends React.Component {
               )}
 
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button 
+                <AnimatedButton 
                   onClick={this.handleReset}
                   className="flex-1"
+                  variant="primary"
                 >
                   Try Again
-                </Button>
-                <Button 
+                </AnimatedButton>
+                <AnimatedButton 
                   variant="outline"
                   onClick={() => window.location.reload()}
                   className="flex-1"
                 >
                   Refresh Page
-                </Button>
+                </AnimatedButton>
               </div>
 
-              <Button 
-                variant="link"
+              <AnimatedButton 
+                variant="ghost"
                 onClick={() => window.location.href = '/'}
                 className="w-full"
+                hoverEffect={false}
               >
                 Return to Home
-              </Button>
+              </AnimatedButton>
             </CardContent>
           </Card>
         </div>

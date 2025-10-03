@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { 
   FaUser, 
   FaPlus, 
@@ -14,7 +14,7 @@ import {
   FaToggleOff
 } from 'react-icons/fa';
 import { format } from 'date-fns';
-import { Button } from '../../components/ui/Button';
+import AnimatedButton from '../../components/ui/AnimatedButton';
 import { Input } from '../../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import Modal from '../../components/ui/Modal';
@@ -43,7 +43,7 @@ const UserManagement = () => {
         method: 'GET'
       });
       setUsers(response.data.users || []);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to fetch users');
     } finally {
       setLoading(false);
@@ -59,8 +59,8 @@ const UserManagement = () => {
       setUsers(prev => [...prev, response.data.user]);
       toast.success('User created successfully');
       setShowCreateModal(false);
-    } catch (error) {
-      toast.error(error.message || 'Failed to create user');
+    } catch (_error) {
+      toast.error('Failed to create user');
     }
   };
 
@@ -95,7 +95,7 @@ const UserManagement = () => {
         )
       );
       toast.success(`User ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to update user status');
     }
   };
@@ -114,7 +114,7 @@ const UserManagement = () => {
       });
       setUsers(prev => prev.filter(user => user._id !== userId));
       toast.success('User deleted successfully');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to delete user');
     }
   };
@@ -153,19 +153,20 @@ const UserManagement = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
           <p className="text-gray-600">Manage admin users and permissions</p>
         </div>
         {admin.role === 'super_admin' && (
-          <Button 
+          <AnimatedButton 
             onClick={() => setShowCreateModal(true)}
             className="flex items-center gap-2"
+            variant="primary"
           >
             <FaPlus className="w-4 h-4" />
             Add User
-          </Button>
+          </AnimatedButton>
         )}
       </div>
 
@@ -285,7 +286,7 @@ const UserManagement = () => {
                       
                       <div className="flex items-center gap-2">
                         {admin.role === 'super_admin' && user._id !== admin._id && (
-                          <Button
+                          <AnimatedButton
                             variant="outline"
                             size="sm"
                             onClick={() => handleToggleStatus(user._id, user.status)}
@@ -302,11 +303,11 @@ const UserManagement = () => {
                                 Activate
                               </>
                             )}
-                          </Button>
+                          </AnimatedButton>
                         )}
                         
                         {(admin.role === 'super_admin' || user._id === admin._id) && (
-                          <Button
+                          <AnimatedButton
                             variant="outline"
                             size="sm"
                             onClick={() => {
@@ -317,11 +318,11 @@ const UserManagement = () => {
                           >
                             <FaEdit className="w-4 h-4" />
                             Edit
-                          </Button>
+                          </AnimatedButton>
                         )}
                         
                         {admin.role === 'super_admin' && user._id !== admin._id && (
-                          <Button
+                          <AnimatedButton
                             variant="outline"
                             size="sm"
                             onClick={() => handleDeleteUser(user._id)}
@@ -329,7 +330,7 @@ const UserManagement = () => {
                           >
                             <FaTrash className="w-4 h-4" />
                             Delete
-                          </Button>
+                          </AnimatedButton>
                         )}
                       </div>
                     </div>
@@ -397,7 +398,7 @@ const UserForm = ({ user, onSubmit, onCancel, isCreate, isOwnProfile }) => {
     password: '',
     confirmPassword: ''
   });
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -481,21 +482,20 @@ const UserForm = ({ user, onSubmit, onCancel, isCreate, isOwnProfile }) => {
       </div>
       
       <div className="flex gap-3 pt-4 border-t">
-        <Button 
+        <AnimatedButton 
           type="submit" 
-          loading={loading}
           className="flex items-center gap-2"
+          variant="primary"
         >
           {isCreate ? 'Create User' : 'Update User'}
-        </Button>
-        <Button 
+        </AnimatedButton>
+        <AnimatedButton 
           type="button" 
           variant="outline" 
           onClick={onCancel}
-          disabled={loading}
         >
           Cancel
-        </Button>
+        </AnimatedButton>
       </div>
     </form>
   );

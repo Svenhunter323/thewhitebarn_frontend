@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Card, CardContent } from '../ui/Card';
 import toast from 'react-hot-toast';
@@ -79,7 +78,7 @@ const Footer = () => {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+              <h3 className="text-2xl md:text-3xl font-serif font-bold mb-4">
                 Stay Updated with Our Latest Events
               </h3>
               <p className="text-lg mb-8 opacity-90">
@@ -93,16 +92,31 @@ const Footer = () => {
                     placeholder="Enter your email"
                     value={newsletterEmail}
                     onChange={(e) => setNewsletterEmail(e.target.value)}
-                    className="flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/70"
+                    className="h-12 flex-1 bg-white/10 border-white/20 text-white placeholder:text-white/70"
                     required
                   />
-                  <Button 
-                    type="submit" 
-                    loading={isSubmitting}
-                    className="bg-white text-amber-600 hover:bg-white/90"
+                  <motion.button 
+                    className="h-12 btn-primary relative overflow-hidden group"
+                    whileHover={{ 
+                      scale: 1.05,
+                      boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                    }}
+                    whileTap={{ 
+                      scale: 0.98,
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                    }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 400,
+                      damping: 10
+                    }}
                   >
-                    Subscribe
-                  </Button>
+                    <span className="relative z-10">Subscribe</span>
+                    <motion.span 
+                      className="absolute inset-0 bg-white/20 -left-full group-hover:left-0 transition-all duration-700 ease-in-out z-0"
+                      initial={{ left: '-100%' }}
+                    />
+                  </motion.button>
                 </div>
               </form>
             </motion.div>
@@ -117,12 +131,23 @@ const Footer = () => {
             
             {/* Company Info */}
             <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">WB</span>
+              {/* Logo */}
+              <Link 
+                to="/" 
+                className="flex items-center space-x-2 z-50"
+              >
+                <div className="logo">
+                  <img 
+                    src="images/white-logo.png" 
+                    alt="The White Barn FL Logo" 
+                    style={{
+                      maxWidth: '100%',
+                      height: 'auto',
+                      width: '200px'
+                    }}
+                  />
                 </div>
-                <span className="font-bold text-lg">The White Barn FL</span>
-              </div>
+              </Link>
               
               <p className="text-gray-300 text-sm leading-relaxed">
                 Creating unforgettable moments in our beautiful rustic venue. 

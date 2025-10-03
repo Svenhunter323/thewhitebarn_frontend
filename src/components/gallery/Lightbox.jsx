@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '../ui/Button';
+import AnimatedButton from '../ui/AnimatedButton';
 
 const Lightbox = ({ 
   images = [], 
@@ -84,7 +84,7 @@ const Lightbox = ({
         onClick={onClose}
       >
         {/* Close Button */}
-        <Button
+        <AnimatedButton
           variant="ghost"
           size="icon"
           onClick={onClose}
@@ -93,12 +93,12 @@ const Lightbox = ({
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
-        </Button>
+        </AnimatedButton>
 
         {/* Navigation Buttons */}
         {images.length > 1 && (
           <>
-            <Button
+            <AnimatedButton
               variant="ghost"
               size="icon"
               onClick={(e) => {
@@ -110,9 +110,9 @@ const Lightbox = ({
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-            </Button>
+            </AnimatedButton>
 
-            <Button
+            <AnimatedButton
               variant="ghost"
               size="icon"
               onClick={(e) => {
@@ -124,7 +124,7 @@ const Lightbox = ({
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </Button>
+            </AnimatedButton>
           </>
         )}
 
@@ -206,7 +206,7 @@ const Lightbox = ({
         {images.length > 1 && images.length <= 10 && (
           <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex space-x-2 bg-black/50 p-2 rounded-lg">
             {images.map((image, index) => (
-              <button
+              <AnimatedButton
                 key={index}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -214,7 +214,8 @@ const Lightbox = ({
                   setIsLoading(true);
                   setImageError(false);
                 }}
-                className={`w-12 h-12 rounded overflow-hidden border-2 transition-all ${
+                variant="outline"
+                className={`w-12 h-12 rounded overflow-hidden transition-all ${
                   index === imageIndex 
                     ? 'border-white scale-110' 
                     : 'border-transparent hover:border-white/50'
@@ -225,7 +226,7 @@ const Lightbox = ({
                   alt={`Thumbnail ${index + 1}`}
                   className="w-full h-full object-cover"
                 />
-              </button>
+              </AnimatedButton>
             ))}
           </div>
         )}
