@@ -36,7 +36,8 @@ const ReviewManagement = () => {
     const fetchReviews = async () => {
       try {
         setLoading(true);
-        const response = await apiService.get('/reviews');
+        const response = await apiService.getReviews();
+        console.log(response)
         setReviews(response.data);
       } catch (err) {
         setError('Failed to fetch reviews');

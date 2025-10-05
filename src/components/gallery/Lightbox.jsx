@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedButton from '../ui/AnimatedButton';
+import { getFullImageUrl, getThumbnailUrl } from '../../utils/imageUtils';
 
 const Lightbox = ({ 
   images = [], 
@@ -162,7 +163,7 @@ const Lightbox = ({
 
             {/* Main Image */}
             <img
-              src={currentImage.url}
+              src={getFullImageUrl(currentImage)}
               alt={currentImage.title || `Image ${imageIndex + 1}`}
               className={`w-full h-full object-contain rounded-lg ${isLoading ? 'opacity-0' : 'opacity-100'}`}
               onLoad={() => setIsLoading(false)}
@@ -222,7 +223,7 @@ const Lightbox = ({
                 }`}
               >
                 <img
-                  src={image.thumbnail || image.url}
+                  src={getThumbnailUrl(image)}
                   alt={`Thumbnail ${index + 1}`}
                   className="w-full h-full object-cover"
                 />

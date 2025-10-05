@@ -18,7 +18,8 @@ import Modal from '../../components/ui/Modal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Lightbox from '../../components/gallery/Lightbox';
 import apiService from '../../services/api';
-import toast from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
+import { getThumbnailUrl, getPlaceholderUrl } from '../../utils/imageUtils';
 
 const GalleryManagement = () => {
   const [images, setImages] = useState([]);
@@ -42,10 +43,14 @@ const GalleryManagement = () => {
       setLoading(true);
       const [imagesRes, categoriesRes] = await Promise.all([
         apiService.request('/admin/gallery', { method: 'GET' }),
-        apiService.request('/admin/gallery/categories', { method: 'GET' })
+        apiService.request('/gallery/categories', { method: 'GET' })
       ]);
+      
       setImages(imagesRes.data.images || []);
-      setCategories(categoriesRes.data.categories || []);
+      setCategories(categoriesRes.data || []);
+
+      console.log(categories)
+      
     } catch (error) {
       toast.error('Failed to fetch gallery data');
     } finally {
@@ -131,9 +136,9 @@ const GalleryManagement = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Gallery Management</h1>
           <p className="text-gray-600">Manage your venue's photo gallery</p>
@@ -199,9 +204,9 @@ const GalleryManagement = () => {
               className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
               <option value="all">All Categories</option>
-              {categories.map(category => (
-                <option key={category.slug} value={category.slug}>
-                  {category.name}
+              {categories.map((category, index) => (
+                <option key={index} value={category}>
+                  {category}
                 </option>
               ))}
             </select>
@@ -223,9 +228,12 @@ const GalleryManagement = () => {
               <Card className="overflow-hidden group hover:shadow-lg transition-shadow">
                 <div className="relative aspect-square">
                   <img
-                    src={image.thumbnail || image.url}
+                    src={getThumbnailUrl(image)}
                     alt={image.title || 'Gallery image'}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.src = getPlaceholderUrl();
+                    }}
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <div className="flex gap-2">
@@ -276,7 +284,7 @@ const GalleryManagement = () => {
                   </p>
                   {image.category && (
                     <span className="inline-block mt-2 px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-                      {categories.find(c => c.slug === image.category)?.name || image.category}
+                      {categories.find(c => c === image.category) || image.category}
                     </span>
                   )}
                 </CardContent>
@@ -318,7 +326,7 @@ const GalleryManagement = () => {
         title="Upload Images"
         size="lg"
       >
-        <div className="space-y-6">
+        <div className="">
           <div
             {...getRootProps()}
             className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
@@ -394,9 +402,12 @@ const EditImageForm = ({ image, categories, onSave, onCancel }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="md:col-span-2">
           <img
-            src={image.thumbnail || image.url}
+            src={getThumbnailUrl(image)}
             alt={image.title}
             className="w-full h-48 object-cover rounded-lg"
+            onError={(e) => {
+              e.target.src = getPlaceholderUrl();
+            }}
           />
         </div>
         
@@ -415,9 +426,9 @@ const EditImageForm = ({ image, categories, onSave, onCancel }) => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
             <option value="">Select category</option>
-            {categories.map(category => (
-              <option key={category.slug} value={category.slug}>
-                {category.name}
+            {categories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
               </option>
             ))}
           </select>
@@ -456,10 +467,10 @@ const EditImageForm = ({ image, categories, onSave, onCancel }) => {
       </div>
       
       <div className="flex gap-3 pt-4 border-t">
-        <Button type="submit">Save Changes</Button>
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <AnimatedButton type="submit">Save Changes</AnimatedButton>
+        <AnimatedButton type="button" variant="outline" onClick={onCancel}>
           Cancel
-        </Button>
+        </AnimatedButton>
       </div>
     </form>
   );
