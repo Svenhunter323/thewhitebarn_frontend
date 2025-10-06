@@ -13,7 +13,7 @@ import {
 } from 'react-icons/fa';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { format } from 'date-fns';
-import { adminAPI } from '../../utils/api';
+import { adminAPI } from '../../services/api';
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);

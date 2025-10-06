@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
 import { 
   FaImages, 
@@ -17,7 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Ca
 import Modal from '../../components/ui/Modal';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Lightbox from '../../components/gallery/Lightbox';
-import apiService from '../../services/api';
+import { adminAPI } from '../../services/api';
 import { toast } from 'react-hot-toast';
 import { getThumbnailUrl, getPlaceholderUrl } from '../../utils/imageUtils';
 
@@ -41,17 +41,17 @@ const GalleryManagement = () => {
   const fetchGalleryData = async () => {
     try {
       setLoading(true);
-      const [imagesRes, categoriesRes] = await Promise.all([
-        apiService.request('/admin/gallery', { method: 'GET' }),
-        apiService.request('/gallery/categories', { method: 'GET' })
-      ]);
+      const imagesRes = await adminAPI.getGalleryImages();
       
-      setImages(imagesRes.data.images || []);
-      setCategories(categoriesRes.data || []);
-
-      console.log(categories)
+      const images = imagesRes.data.images || imagesRes.data.data?.images || [];
+      setImages(images);
       
-    } catch (error) {
+      // Extract unique categories from images
+      const uniqueCategories = [...new Set(images.map(img => img.category).filter(Boolean))];
+      setCategories(uniqueCategories);
+      
+    } catch (err) {
+      console.error('Error fetching gallery data:', err);
       toast.error('Failed to fetch gallery data');
     } finally {
       setLoading(false);
@@ -75,16 +75,14 @@ const GalleryManagement = () => {
     });
 
     try {
-      const response = await apiService.request('/admin/gallery/upload', {
-        method: 'POST',
-        body: formData,
-        headers: {} // Let browser set Content-Type for FormData
-      });
+      const response = await adminAPI.uploadGalleryImages(formData);
       
-      setImages(prev => [...prev, ...response.data.images]);
+      const newImages = response.data.images || response.data.data?.images || [];
+      setImages(prev => [...prev, ...newImages]);
       toast.success(`${files.length} image(s) uploaded successfully`);
       setShowUploadModal(false);
-    } catch (error) {
+    } catch (err) {
+      console.error('Error uploading images:', err);
       toast.error('Failed to upload images');
     } finally {
       setUploading(false);
@@ -95,31 +93,29 @@ const GalleryManagement = () => {
     if (!window.confirm('Are you sure you want to delete this image?')) return;
 
     try {
-      await apiService.request(`/admin/gallery/${imageId}`, {
-        method: 'DELETE'
-      });
+      await adminAPI.deleteGalleryImage(imageId);
       setImages(prev => prev.filter(img => img._id !== imageId));
       toast.success('Image deleted successfully');
-    } catch (error) {
+    } catch (err) {
+      console.error('Error deleting image:', err);
       toast.error('Failed to delete image');
     }
   };
 
   const handleUpdateImage = async (imageData) => {
     try {
-      const response = await apiService.request(`/admin/gallery/${selectedImage._id}`, {
-        method: 'PUT',
-        body: JSON.stringify(imageData)
-      });
+      const response = await adminAPI.updateGalleryImage(selectedImage._id, imageData);
       
+      const updatedImage = response.data.image || response.data.data?.image;
       setImages(prev => 
         prev.map(img => 
-          img._id === selectedImage._id ? response.data.image : img
+          img._id === selectedImage._id ? updatedImage : img
         )
       );
       toast.success('Image updated successfully');
       setShowEditModal(false);
-    } catch (error) {
+    } catch (err) {
+      console.error('Error updating image:', err);
       toast.error('Failed to update image');
     }
   };

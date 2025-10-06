@@ -39,10 +39,10 @@ const UserManagement = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await apiService.request('/admin/users', {
+      const response = await apiService.request('/admin/admins', {
         method: 'GET'
       });
-      setUsers(response.data.users || []);
+      setUsers(response.data.admins || []);
     } catch (_error) {
       toast.error('Failed to fetch users');
     } finally {

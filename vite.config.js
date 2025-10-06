@@ -11,7 +11,8 @@ const __dirname = path.dirname(__filename)
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: path.resolve(__dirname, 'dist'),
+    // outDir: path.resolve(__dirname, 'dist'),
+    outDir: path.resolve(__dirname, '../backend/dist'),
     emptyOutDir: true,
     rollupOptions: {
       output: {

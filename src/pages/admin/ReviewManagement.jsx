@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { 
   FaStar, 
   FaCheck, 
@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Ca
 import Modal from '../../components/ui/Modal';
 import { Alert, AlertDescription } from '../../components/ui/Alert';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import apiService from '../../services/api';
+import { adminAPI } from '../../services/api';
 
 const ReviewManagement = () => {
   const [reviews, setReviews] = useState([]);
@@ -27,8 +27,9 @@ const ReviewManagement = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  // Pagination could be added later if needed
+  const currentPage = 1;
+  // const totalPages = 1;
   const [error, setError] = useState(null);
 
   // Fetch reviews on component mount
@@ -36,9 +37,8 @@ const ReviewManagement = () => {
     const fetchReviews = async () => {
       try {
         setLoading(true);
-        const response = await apiService.getReviews();
-        console.log(response)
-        setReviews(response.data.reviews);
+        const response = await adminAPI.getReviews({ page: currentPage, status: statusFilter });
+        setReviews(response.data.reviews || response.data.data?.reviews || []);
       } catch (err) {
         setError('Failed to fetch reviews');
         console.error('Error fetching reviews:', err);
@@ -48,7 +48,7 @@ const ReviewManagement = () => {
     };
 
     fetchReviews();
-  }, []);
+  }, [currentPage, statusFilter]);
 
   // Filter reviews based on search term and status
   const filteredReviews = reviews.filter(review => {
@@ -63,7 +63,7 @@ const ReviewManagement = () => {
   // Handle review status update
   const handleStatusUpdate = async (reviewId, status) => {
     try {
-      await apiService.patch(`/reviews/${reviewId}`, { status });
+      await adminAPI.updateReviewStatus(reviewId, { status });
       setReviews(prev => 
         prev.map(review => 
           review._id === reviewId ? { ...review, status } : review
@@ -79,10 +79,45 @@ const ReviewManagement = () => {
     if (!window.confirm('Are you sure you want to delete this review?')) return;
     
     try {
-      await apiService.delete(`/reviews/${reviewId}`);
+      await adminAPI.deleteReview(reviewId);
       setReviews(prev => prev.filter(review => review._id !== reviewId));
     } catch (err) {
       console.error('Error deleting review:', err);
+    }
+  };
+
+  // Handle approve
+  const handleApprove = async (reviewId) => {
+    await handleStatusUpdate(reviewId, 'approved');
+    setShowDetailsModal(false);
+  };
+
+  // Handle reject
+  const handleReject = async (reviewId) => {
+    await handleStatusUpdate(reviewId, 'rejected');
+    setShowDetailsModal(false);
+  };
+
+  // Helper functions
+  const renderStars = (rating) => {
+    return [...Array(5)].map((_, i) => (
+      <FaStar
+        key={i}
+        className={`w-4 h-4 ${
+          i < rating ? 'text-amber-500' : 'text-gray-300'
+        }`}
+      />
+    ));
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-yellow-100 text-yellow-800';
     }
   };
 

@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { 
   FaHome, 
   FaInfoCircle, 
   FaPhone, 
   FaSave, 
-  FaEdit,
-  FaEye,
-  FaUndo
+  FaUndo,
+  FaBuilding,
+  FaShare,
+  FaPlus,
+  FaTrash
 } from 'react-icons/fa';
 import AnimatedButton from '../../components/ui/AnimatedButton';
 import { Input } from '../../components/ui/Input';
@@ -26,7 +27,9 @@ const ContentManagement = () => {
   const tabs = [
     { id: 'home', label: 'Homepage', icon: FaHome },
     { id: 'about', label: 'About Us', icon: FaInfoCircle },
-    { id: 'contact', label: 'Contact Info', icon: FaPhone }
+    { id: 'contact', label: 'Contact Info', icon: FaPhone },
+    { id: 'property', label: 'Property Details', icon: FaBuilding },
+    { id: 'social', label: 'Social Links', icon: FaShare }
   ];
 
   useEffect(() => {
@@ -36,11 +39,13 @@ const ContentManagement = () => {
   const fetchContent = async () => {
     try {
       setLoading(true);
-      const response = await apiService.request('/admin/content', {
+      const response = await apiService.request('/content/admin/all', {
         method: 'GET'
       });
+      // console.log("content data:\n", response)
       setContent(response.data.content || {});
     } catch (error) {
+      console.error('Error fetching content:', error);
       toast.error('Failed to fetch content');
     } finally {
       setLoading(false);
@@ -50,13 +55,77 @@ const ContentManagement = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await apiService.request('/admin/content', {
-        method: 'PUT',
-        body: JSON.stringify({ content })
-      });
+      // Save each content section individually using existing endpoints
+      const savePromises = [];
+      
+      if (content.contactDetails) {
+        // Remove MongoDB-specific fields before saving
+        const { _id, __v, createdAt: _createdAt, updatedAt: _updatedAt, ...cleanContactData } = content.contactDetails;
+        savePromises.push(
+          apiService.request('/content/contact-details', {
+            method: 'POST',
+            body: JSON.stringify(cleanContactData)
+          })
+        );
+      }
+      
+      if (content.aboutDetails) {
+        // Remove MongoDB-specific fields before saving
+        const { _id, __v, createdAt: _createdAt, updatedAt: _updatedAt, ...cleanAboutData } = content.aboutDetails;
+        // Clean team members array
+        if (cleanAboutData.teamMembers) {
+          cleanAboutData.teamMembers = cleanAboutData.teamMembers.map(member => {
+            const { _id, ...cleanMember } = member;
+            return cleanMember;
+          });
+        }
+        savePromises.push(
+          apiService.request('/content/about-details', {
+            method: 'POST',
+            body: JSON.stringify(cleanAboutData)
+          })
+        );
+      }
+      
+      if (content.homeDetails) {
+        // Remove MongoDB-specific fields before saving
+        const { _id, __v, createdAt: _createdAt, updatedAt: _updatedAt, ...cleanHomeData } = content.homeDetails;
+        savePromises.push(
+          apiService.request('/content/home-details', {
+            method: 'POST',
+            body: JSON.stringify(cleanHomeData)
+          })
+        );
+      }
+      
+      if (content.propertyDetails) {
+        // Remove MongoDB-specific fields before saving
+        const { _id, __v, createdAt: _createdAt, updatedAt: _updatedAt, ...cleanPropertyData } = content.propertyDetails;
+        // Clean images array
+        if (cleanPropertyData.images) {
+          cleanPropertyData.images = cleanPropertyData.images.map(image => {
+            const { _id, ...cleanImage } = image;
+            return cleanImage;
+          });
+        }
+        savePromises.push(
+          apiService.request('/content/property-details', {
+            method: 'POST',
+            body: JSON.stringify(cleanPropertyData)
+          })
+        );
+      }
+      
+      // Note: Social links are managed separately through social links endpoints
+      // Property details saving is handled above
+      
+      // Execute all save operations
+      await Promise.all(savePromises);
+      
       toast.success('Content saved successfully');
       setHasChanges(false);
     } catch (error) {
+      console.error('Error saving content:', error);
       toast.error('Failed to save content');
     } finally {
       setSaving(false);
@@ -64,13 +133,35 @@ const ContentManagement = () => {
   };
 
   const updateContent = (section, field, value) => {
-    setContent(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
+    // Map section names to API property names
+    const sectionMap = {
+      'home': 'homeDetails',
+      'about': 'aboutDetails', 
+      'contact': 'contactDetails',
+      'property': 'propertyDetails',
+      'social': 'socialLinks'
+    };
+    
+    const apiSection = sectionMap[section] || section;
+    
+    setContent(prev => {
+      // Handle social links as array
+      if (section === 'social' && field === 'socialLinks') {
+        return {
+          ...prev,
+          [apiSection]: value
+        };
       }
-    }));
+      
+      // Handle other sections as objects
+      return {
+        ...prev,
+        [apiSection]: {
+          ...prev[apiSection],
+          [field]: value
+        }
+      };
+    });
     setHasChanges(true);
   };
 
@@ -139,22 +230,36 @@ const ContentManagement = () => {
       <div className="space-y-6">
         {activeTab === 'home' && (
           <HomeContentForm
-            content={content.home || {}}
+            content={content.homeDetails || {}}
             onChange={(field, value) => updateContent('home', field, value)}
           />
         )}
         
         {activeTab === 'about' && (
           <AboutContentForm
-            content={content.about || {}}
+            content={content.aboutDetails || {}}
             onChange={(field, value) => updateContent('about', field, value)}
           />
         )}
         
         {activeTab === 'contact' && (
           <ContactContentForm
-            content={content.contact || {}}
+            content={content.contactDetails || {}}
             onChange={(field, value) => updateContent('contact', field, value)}
+          />
+        )}
+        
+        {activeTab === 'property' && (
+          <PropertyContentForm
+            content={content.propertyDetails || {}}
+            onChange={(field, value) => updateContent('property', field, value)}
+          />
+        )}
+        
+        {activeTab === 'social' && (
+          <SocialLinksForm
+            content={content.socialLinks || []}
+            onChange={(field, value) => updateContent('social', field, value)}
           />
         )}
       </div>
@@ -437,6 +542,217 @@ const ContactContentForm = ({ content, onChange }) => {
               placeholder="https://linkedin.com/company/thewhitebarnfl"
             />
           </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+const PropertyContentForm = ({ content, onChange }) => {
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Property Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Property Name"
+              value={content.name || ''}
+              onChange={(e) => onChange('name', e.target.value)}
+              placeholder="The White Barn FL"
+            />
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Description</label>
+              <textarea
+                value={content.description || ''}
+                onChange={(e) => onChange('description', e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                placeholder="Property description..."
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Capacity & Pricing</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Input
+              label="Seated Capacity"
+              type="number"
+              value={content.capacity?.seated || ''}
+              onChange={(e) => onChange('capacity', { ...content.capacity, seated: parseInt(e.target.value) || 0 })}
+              placeholder="150"
+            />
+            <Input
+              label="Standing Capacity"
+              type="number"
+              value={content.capacity?.standing || ''}
+              onChange={(e) => onChange('capacity', { ...content.capacity, standing: parseInt(e.target.value) || 0 })}
+              placeholder="200"
+            />
+            <Input
+              label="Base Price ($)"
+              type="number"
+              value={content.pricing?.basePrice || ''}
+              onChange={(e) => onChange('pricing', { ...content.pricing, basePrice: parseInt(e.target.value) || 0 })}
+              placeholder="3500"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Pricing Notes</label>
+            <textarea
+              value={content.pricing?.pricingNotes || ''}
+              onChange={(e) => onChange('pricing', { ...content.pricing, pricingNotes: e.target.value })}
+              rows={2}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+              placeholder="Additional pricing information..."
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Location</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Address"
+              value={content.location?.address || ''}
+              onChange={(e) => onChange('location', { ...content.location, address: e.target.value })}
+              placeholder="4680 SW 148th Ave"
+            />
+            <Input
+              label="City"
+              value={content.location?.city || ''}
+              onChange={(e) => onChange('location', { ...content.location, city: e.target.value })}
+              placeholder="Fort Lauderdale"
+            />
+            <Input
+              label="State"
+              value={content.location?.state || ''}
+              onChange={(e) => onChange('location', { ...content.location, state: e.target.value })}
+              placeholder="FL"
+            />
+            <Input
+              label="Zip Code"
+              value={content.location?.zipCode || ''}
+              onChange={(e) => onChange('location', { ...content.location, zipCode: e.target.value })}
+              placeholder="33330"
+            />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+const SocialLinksForm = ({ content, onChange }) => {
+  const platforms = ['facebook', 'instagram', 'twitter', 'linkedin', 'youtube', 'tiktok'];
+  
+  const addSocialLink = () => {
+    const newLink = {
+      platform: 'facebook',
+      url: '',
+      isActive: true
+    };
+    onChange('socialLinks', [...(content || []), newLink]);
+  };
+  
+  const updateSocialLink = (index, field, value) => {
+    const updatedLinks = [...(content || [])];
+    updatedLinks[index] = { ...updatedLinks[index], [field]: value };
+    onChange('socialLinks', updatedLinks);
+  };
+  
+  const removeSocialLink = (index) => {
+    const updatedLinks = [...(content || [])];
+    updatedLinks.splice(index, 1);
+    onChange('socialLinks', updatedLinks);
+  };
+  
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Social Media Links</CardTitle>
+            <AnimatedButton
+              onClick={addSocialLink}
+              variant="outline"
+              size="sm"
+            >
+              <FaPlus className="w-4 h-4" />
+              Add Link
+            </AnimatedButton>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {(content || []).map((link, index) => (
+            <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg">
+              <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Platform</label>
+                  <select
+                    value={link.platform || 'facebook'}
+                    onChange={(e) => updateSocialLink(index, 'platform', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  >
+                    {platforms.map(platform => (
+                      <option key={platform} value={platform}>
+                        {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">URL</label>
+                  <Input
+                    value={link.url || ''}
+                    onChange={(e) => updateSocialLink(index, 'url', e.target.value)}
+                    placeholder={`https://${link.platform || 'facebook'}.com/thewhitebarnfl`}
+                  />
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`active-${index}`}
+                      checked={link.isActive !== false}
+                      onChange={(e) => updateSocialLink(index, 'isActive', e.target.checked)}
+                      className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                    />
+                    <label htmlFor={`active-${index}`} className="ml-2 text-sm text-gray-600">
+                      Active
+                    </label>
+                  </div>
+                  <AnimatedButton
+                    onClick={() => removeSocialLink(index)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <FaTrash className="w-4 h-4" />
+                  </AnimatedButton>
+                </div>
+              </div>
+            </div>
+          ))}
+          
+          {(!content || content.length === 0) && (
+            <div className="text-center py-8 text-gray-500">
+              <p>No social media links added yet.</p>
+              <p className="text-sm">Click "Add Link" to get started.</p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
