@@ -99,9 +99,8 @@ export const AuthProvider = ({ children }) => {
 
   // Memoize the verifyToken function
   const verifyToken = useCallback(async () => {
-    // Prevent multiple simultaneous verification calls globally
     if (tokenManager.isVerifying()) {
-      console.log('Token verification already in progress globally, skipping...');
+      console.log('Token verification already in progress, skipping...');
       return;
     }
 
@@ -112,29 +111,36 @@ export const AuthProvider = ({ children }) => {
       console.log('Verifying token:', token ? 'Token found' : 'No token');
       
       if (!tokenManager.hasValidToken()) {
-        // No valid token found, user is not logged in
-        console.log('No valid token, setting logout state');
+        console.log('No valid token, logging out');
         dispatch({ type: 'LOGOUT' });
         return;
       }
 
-      // Set token before making request
       apiService.setAuthToken(token);
-      console.log('Making verify-token request...');
       
-      const response = await apiService.request('/auth/verify-token', { method: 'GET' });
-      console.log('Token verification successful');
+      const response = await apiService.request('/auth/verify-token', { 
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+
+      console.log('Token verification response:', response);
       
+      if (!response.data?.admin) {
+        throw new Error('Invalid admin data in token verification');
+      }
+
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: {
-          admin: response.data?.admin,
+          admin: response.data.admin,
           token: token
         }
       });
     } catch (error) {
       console.error('Token verification failed:', error.message);
-      // Clear invalid token and logout
       tokenManager.clearToken();
       apiService.setAuthToken(null);
       dispatch({ type: 'LOGOUT' });
@@ -151,28 +157,25 @@ export const AuthProvider = ({ children }) => {
       
       const response = await apiService.request('/auth/login', {
         method: 'POST',
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(credentials),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
       
-      console.log('Login response received:', response);
-      const token = response.token;
-      const admin = response.data?.admin;
-
-      if (!token) {
-        console.error('Full response:', response);
-        throw new Error('No token received from server');
-      }
-
-      if (!admin) {
-        console.error('Full response:', response);
-        throw new Error('No admin data received from server');
-      }
-
-      console.log('Storing token and setting auth...');
+      console.log('Login response:', response);
       
-      // Set token using token manager (this will also set the cookie)
-      apiService.setAuthToken(token);
+      const { token, data: { admin } = {} } = response || {};
+      
+      if (!token || !admin) {
+        const error = new Error('Invalid response from server');
+        error.response = response;
+        throw error;
+      }
 
+      // Store token and update auth state
+      apiService.setAuthToken(token);
+      
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: { admin, token }
@@ -182,17 +185,43 @@ export const AuthProvider = ({ children }) => {
       toast.success('Login successful!');
       return { success: true };
     } catch (error) {
-      console.error('Login failed:', error.message);
-      const errorMessage = error.message || 'Login failed';
+      console.error('Login error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Login failed';
       
       dispatch({
         type: 'LOGIN_FAILURE',
         payload: errorMessage
       });
+      
       toast.error(errorMessage);
       return { success: false, error: errorMessage };
     }
   }, []);
+
+  // Verify authentication status on mount and when token changes
+  useEffect(() => {
+    const verifyAuth = async () => {
+      const token = tokenManager.getToken();
+      if (token) {
+        await verifyToken();
+      } else {
+        dispatch({ type: 'LOGOUT' });
+      }
+    };
+
+    verifyAuth();
+    
+    // Set up token change listener
+    const unsubscribe = tokenManager.subscribe((token) => {
+      if (!token) {
+        dispatch({ type: 'LOGOUT' });
+      }
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [verifyToken]);
 
   // Change password function
   const changePassword = useCallback(async (passwordData) => {

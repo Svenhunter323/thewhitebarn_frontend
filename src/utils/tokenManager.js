@@ -46,7 +46,20 @@ class TokenManager {
   // Check if token exists and is valid format
   hasValidToken() {
     const token = this.getToken();
-    return token && token !== 'null' && token !== 'undefined' && token.length > 0;
+    if (!token || token === 'null' || token === 'undefined' || token.length === 0) {
+      return false;
+    }
+
+    try {
+      // Simple JWT validation (checks for 3 parts and valid base64)
+      const parts = token.split('.');
+      return parts.length === 3 && 
+             parts[0].length > 0 && 
+             parts[1].length > 0 && 
+             parts[2].length > 0;
+    } catch (_) {
+      return false;
+    }
   }
 
   // Verification state management
