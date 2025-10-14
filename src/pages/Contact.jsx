@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
+import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaWhatsapp } from 'react-icons/fa';
 import ContactForm from '../components/forms/ContactForm';
 import Map from '../components/map/Map';
 import ApiService from '../services/api';
 import { useApi } from '../hooks/useApi';
+import { trackPhoneClick, trackWhatsAppClick, trackBookTour, getWhatsAppLink } from '../utils/enhancedTracking.jsx';
 
 const Contact = () => {
   // Fetch dynamic contact details from backend
@@ -142,6 +143,11 @@ const Contact = () => {
                       {item.links && item.links[idx] ? (
                         <a
                           href={item.links[idx]}
+                          onClick={() => {
+                            if (item.links[idx].startsWith('tel:')) {
+                              trackPhoneClick(detail);
+                            }
+                          }}
                           className="text-gray-600 hover:text-primary-500 transition-colors block"
                         >
                           {detail}
@@ -221,10 +227,39 @@ const Contact = () => {
                 </p>
                 <a
                   href="tel:+15613762855"
+                  onClick={() => trackPhoneClick('(561) 376-2855')}
                   className="text-primary-400 text-lg font-semibold hover:text-primary-300 transition-colors"
                 >
                   (561) 376-2855
                 </a>
+              </div>
+
+              {/* Quick Contact Actions */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* WhatsApp Button */}
+                <a
+                  href={getWhatsAppLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={trackWhatsAppClick}
+                  className="flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-white p-4 rounded-lg transition-colors font-semibold"
+                >
+                  <FaWhatsapp className="text-xl" />
+                  Chat on WhatsApp
+                </a>
+
+                {/* Book Tour Button */}
+                <button
+                  onClick={() => {
+                    trackBookTour('contact_page');
+                    // Scroll to contact form
+                    document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="flex items-center justify-center gap-3 bg-primary-500 hover:bg-primary-600 text-white p-4 rounded-lg transition-colors font-semibold"
+                >
+                  <FaClock className="text-xl" />
+                  Schedule Tour
+                </button>
               </div>
             </motion.div>
           </div>

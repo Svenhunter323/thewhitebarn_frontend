@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import Layout from './components/layout/Layout';
@@ -22,11 +23,25 @@ import UserManagement from './pages/admin/UserManagement';
 import Analytics from './pages/admin/Analytics';
 import Settings from './pages/admin/Settings';
 
+import { initAllTracking, GTMNoScript, track } from './utils/enhancedTracking.jsx';
+
+const PageViewTracker = () => {
+  const location = useLocation()
+  useEffect(() => {
+    track('page_view', { page_path: location.pathname + location.search })
+  }, [location])
+  return null
+}
+
+initAllTracking()
+
 function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
         <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <GTMNoScript gtmId={import.meta.env.VITE_GTM_ID} />
+          <PageViewTracker />
           <Routes>
             {/* Public Routes with Layout */}
             <Route path="/" element={<Layout />}>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import ApiService from '../../services/api';
 import { useApiMutation } from '../../hooks/useApi';
+import { trackLeadSubmit } from '../../utils/enhancedTracking.jsx';
 
 const ContactForm = ({ isFooter = true }) => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
@@ -11,6 +12,15 @@ const ContactForm = ({ isFooter = true }) => {
   const onSubmit = async (data) => {
     try {
       await mutate(() => ApiService.submitContactForm(data));
+      
+      // Track successful lead submission
+      trackLeadSubmit({
+        form_type: isFooter ? 'footer' : 'contact_page',
+        name: data.name,
+        email: data.email,
+        subject: data.subject
+      });
+      
       toast.success('Message sent successfully! We will get back to you soon.');
       reset();
     } catch (error) {
