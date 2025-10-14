@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaTimes, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaFacebookF, FaInstagram } from 'react-icons/fa';
+import { FaTimes, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaFacebookF, FaInstagram, FaChevronDown } from 'react-icons/fa';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -19,15 +20,58 @@ const Header = () => {
 
   useEffect(() => {
     setIsOpen(false);
+    setActiveDropdown(null);
   }, [location]);
+
+  const handleDropdownToggle = (itemName) => {
+    setActiveDropdown(activeDropdown === itemName ? null : itemName);
+  };
+
+  const handleMouseEnter = (itemName) => {
+    setActiveDropdown(itemName);
+  };
+
+  const handleMouseLeave = () => {
+    setActiveDropdown(null);
+  };
+
+  const isActiveRoute = (item) => {
+    if (item.path) {
+      return location.pathname === item.path;
+    }
+    if (item.dropdown) {
+      return item.dropdown.some(subItem => location.pathname === subItem.path);
+    }
+    return false;
+  };
 
   const navItems = [
     { name: 'Home', path: '/' },
-    { name: 'About Us', path: '/about' },
-    { name: 'Videos', path: '/videos' },
-    { name: 'Gallery', path: '/gallery' },
-    { name: 'Licenses & Accrediations', path: '/licenses' },
-    { name: 'Associations We Believe In', path: '/associations' },
+    {
+      name: 'Events',
+      dropdown: [
+        { name: 'Weddings', path: '/weddings' },
+        { name: 'Corporate', path: '/corporate' },
+        { name: 'Showers & Family', path: '/showers-family' },
+      ]
+    },
+    {
+      name: 'Venue',
+      dropdown: [
+        { name: 'Indoor/AC', path: '/indoor-ac' },
+        { name: 'Gallery', path: '/gallery' },
+        { name: 'Videos', path: '/videos' },
+      ]
+    },
+    { name: 'Reviews', path: '/reviews' },
+    {
+      name: 'About',
+      dropdown: [
+        { name: 'About Us', path: '/about' },
+        { name: 'Licenses & Accreditations', path: '/licenses' },
+        { name: 'Associations We Believe In', path: '/associations' },
+      ]
+    },
     { name: 'Contact Us', path: '/contact' },
   ];
 
@@ -63,29 +107,89 @@ const Header = () => {
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-8">
               {navItems.map((item) => (
-                <Link
+                <div
                   key={item.name}
-                  to={item.path}
-                  className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200 ${
-                    location.pathname === item.path
-                      ? isScrolled 
-                        ? 'text-amber-600' 
-                        : 'text-amber-900'
-                      : isScrolled 
-                        ? 'text-gray-700 hover:text-amber-600' 
-                        : 'text-black hover:text-amber-900'
-                  }`}
+                  className="relative"
+                  onMouseEnter={() => item.dropdown && handleMouseEnter(item.name)}
+                  onMouseLeave={() => item.dropdown && handleMouseLeave()}
                 >
-                  {item.name}
-                  {location.pathname === item.path && (
-                    <motion.div
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-current"
-                      layoutId="activeTab"
-                      initial={false}
-                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    />
+                  {item.dropdown ? (
+                    <>
+                      <button
+                        className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200 flex items-center space-x-1 ${
+                          isActiveRoute(item)
+                            ? isScrolled 
+                              ? 'text-amber-600' 
+                              : 'text-amber-900'
+                            : isScrolled 
+                              ? 'text-gray-700 hover:text-amber-600' 
+                              : 'text-black hover:text-amber-900'
+                        }`}
+                      >
+                        <span>{item.name}</span>
+                        <FaChevronDown className="h-3 w-3" />
+                        {isActiveRoute(item) && (
+                          <motion.div
+                            className="absolute bottom-0 left-0 right-0 h-0.5 bg-current"
+                            layoutId="activeTab"
+                            initial={false}
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                          />
+                        )}
+                      </button>
+                      
+                      {/* Dropdown Menu */}
+                      <AnimatePresence>
+                        {activeDropdown === item.name && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                          >
+                            {item.dropdown.map((subItem) => (
+                              <Link
+                                key={subItem.name}
+                                to={subItem.path}
+                                className={`block px-4 py-2 text-sm transition-colors duration-200 ${
+                                  location.pathname === subItem.path
+                                    ? 'text-amber-600 bg-amber-50'
+                                    : 'text-gray-700 hover:text-amber-600 hover:bg-gray-50'
+                                }`}
+                              >
+                                {subItem.name}
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </>
+                  ) : (
+                    <Link
+                      to={item.path}
+                      className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                        location.pathname === item.path
+                          ? isScrolled 
+                            ? 'text-amber-600' 
+                            : 'text-amber-900'
+                          : isScrolled 
+                            ? 'text-gray-700 hover:text-amber-600' 
+                            : 'text-black hover:text-amber-900'
+                      }`}
+                    >
+                      {item.name}
+                      {location.pathname === item.path && (
+                        <motion.div
+                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-current"
+                          layoutId="activeTab"
+                          initial={false}
+                          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        />
+                      )}
+                    </Link>
                   )}
-                </Link>
+                </div>
               ))}
             </div>
 
@@ -160,20 +264,69 @@ const Header = () => {
                 </div>
 
                 <nav className="mb-8">
-                  <ul className="space-y-4">
+                  <ul className="space-y-2">
                     {navItems.map((item) => (
                       <li key={item.name}>
-                        <Link
-                          to={item.path}
-                          onClick={() => setIsOpen(false)}
-                          className={`block px-4 py-2 text-lg font-medium ${
-                            location.pathname === item.path
-                              ? 'text-amber-600'
-                              : 'text-gray-800 hover:text-amber-600'
-                          }`}
-                        >
-                          {item.name}
-                        </Link>
+                        {item.dropdown ? (
+                          <div>
+                            <button
+                              onClick={() => handleDropdownToggle(item.name)}
+                              className={`w-full flex items-center justify-between px-4 py-2 text-lg font-medium text-left ${
+                                isActiveRoute(item)
+                                  ? 'text-amber-600'
+                                  : 'text-gray-800 hover:text-amber-600'
+                              }`}
+                            >
+                              <span>{item.name}</span>
+                              <FaChevronDown 
+                                className={`h-4 w-4 transition-transform duration-200 ${
+                                  activeDropdown === item.name ? 'rotate-180' : ''
+                                }`} 
+                              />
+                            </button>
+                            <AnimatePresence>
+                              {activeDropdown === item.name && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="overflow-hidden"
+                                >
+                                  <ul className="pl-4 pt-2 space-y-1">
+                                    {item.dropdown.map((subItem) => (
+                                      <li key={subItem.name}>
+                                        <Link
+                                          to={subItem.path}
+                                          onClick={() => setIsOpen(false)}
+                                          className={`block px-4 py-2 text-base ${
+                                            location.pathname === subItem.path
+                                              ? 'text-amber-600 bg-amber-50 rounded'
+                                              : 'text-gray-700 hover:text-amber-600'
+                                          }`}
+                                        >
+                                          {subItem.name}
+                                        </Link>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        ) : (
+                          <Link
+                            to={item.path}
+                            onClick={() => setIsOpen(false)}
+                            className={`block px-4 py-2 text-lg font-medium ${
+                              location.pathname === item.path
+                                ? 'text-amber-600'
+                                : 'text-gray-800 hover:text-amber-600'
+                            }`}
+                          >
+                            {item.name}
+                          </Link>
+                        )}
                       </li>
                     ))}
                   </ul>

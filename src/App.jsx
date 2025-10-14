@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from './contexts/AuthContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import Layout from './components/layout/Layout';
@@ -10,6 +11,11 @@ import VideoGallery from './pages/VideoGallery';
 import Contact from './pages/Contact';
 import Licenses from './pages/Licenses';
 import Associations from './pages/Associations';
+import Weddings from './pages/Weddings';
+import Corporate from './pages/Corporate';
+import ShowersFamily from './pages/ShowersFamily';
+import IndoorAC from './pages/IndoorAC';
+import Reviews from './pages/Reviews';
 
 // Admin components
 import AdminLayout from './components/admin/AdminLayout';
@@ -37,9 +43,10 @@ initAllTracking()
 
 function App() {
   return (
-    <ErrorBoundary>
-      <AuthProvider>
-        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <HelmetProvider>
+      <ErrorBoundary>
+        <AuthProvider>
+          <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <GTMNoScript gtmId={import.meta.env.VITE_GTM_ID} />
           <PageViewTracker />
           <Routes>
@@ -52,6 +59,11 @@ function App() {
               <Route path="contact" element={<Contact />} />
               <Route path="licenses" element={<Licenses />} />
               <Route path="associations" element={<Associations />} />
+              <Route path="weddings" element={<Weddings />} />
+              <Route path="corporate" element={<Corporate />} />
+              <Route path="showers-family" element={<ShowersFamily />} />
+              <Route path="indoor-ac" element={<IndoorAC />} />
+              <Route path="reviews" element={<Reviews />} />
             </Route>
 
             {/* Admin Routes */}
@@ -69,9 +81,10 @@ function App() {
               <Route path="settings" element={<Settings />} />
             </Route>
           </Routes>
-        </Router>
-      </AuthProvider>
-    </ErrorBoundary>
+          </Router>
+        </AuthProvider>
+      </ErrorBoundary>
+    </HelmetProvider>
   );
 }
 
