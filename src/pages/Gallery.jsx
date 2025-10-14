@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import PageSEO from '../components/seo/PageSEO';
 import { FaTimes, FaChevronLeft, FaChevronRight, FaSearch, FaHeart, FaCamera } from 'react-icons/fa';
 import ApiService from '../services/api';
 import { useApi } from '../hooks/useApi';
@@ -137,7 +138,26 @@ const Gallery = () => {
   }, [selectedImage, filteredImages]);
 
   return (
-    <div className="">
+    <>
+      <PageSEO
+        title="Gallery - The White Barn FL | Event Photos & Venue Showcase"
+        description="Browse our stunning gallery of events at The White Barn FL. See weddings, corporate events, and celebrations in our beautiful SW Ranches venue."
+        canonical="/gallery"
+        ogImage="/_og/gallery.jpg"
+        schemaProps={{
+          name: "The White Barn FL - Gallery",
+          description: "Stunning photo gallery showcasing weddings, corporate events, and celebrations at our SW Ranches venue.",
+          amenityFeatures: [
+            "Professional Photography",
+            "Event Documentation",
+            "Venue Showcase",
+            "Wedding Gallery",
+            "Corporate Events"
+          ]
+        }}
+      />
+      
+      <div className="">
       {/* Page Title Section */}
       <section className="relative py-24 text-black overflow-hidden">
         {/* Background Image with Overlay */}
@@ -465,7 +485,8 @@ const Gallery = () => {
           </motion.div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 };
 

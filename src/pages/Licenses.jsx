@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { FaCertificate, FaExternalLinkAlt, FaDownload, FaFileAlt } from 'react-icons/fa';
 import AnimatedButton from '../components/ui/AnimatedButton';
+import PageSEO from '../components/seo/PageSEO';
 
 const Licenses = () => {
   // Actual licenses and certificates from the original PHP project
@@ -130,7 +131,26 @@ const Licenses = () => {
   };
 
   return (
-    <div className="">
+    <>
+      <PageSEO
+        title="Licenses & Accreditations - The White Barn FL | Certified Venue"
+        description="View The White Barn FL's official licenses, certifications, and accreditations. We are a fully licensed and certified event venue in SW Ranches, Florida."
+        canonical="/licenses"
+        ogImage="/_og/licenses.jpg"
+        schemaProps={{
+          name: "The White Barn FL - Licenses & Certifications",
+          description: "Official licenses, certifications, and accreditations for The White Barn FL event venue.",
+          amenityFeatures: [
+            "Licensed Venue",
+            "Certified Operations",
+            "Official Accreditations",
+            "Marriage Ministries",
+            "Professional Standards"
+          ]
+        }}
+      />
+      
+      <div className="">
       {/* Page Title Section */}
       <section className="relative py-24 text-black overflow-hidden">
         {/* Background Image with Overlay */}
@@ -323,7 +343,8 @@ const Licenses = () => {
           </motion.div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -1,25 +1,117 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useIntersectionObserver } from '../../hooks/useIntersectionObserver';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { Button } from '../ui/Button';
+import AnimatedButton from '../ui/AnimatedButton';
+import ApiService from '../../services/api';
+import { track } from '../../utils/enhancedTracking';
 
-const GalleryGrid = ({ images = [], categories = [], onImageClick }) => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [filteredImages, setFilteredImages] = useState(images);
+// Cache for API responses to prevent duplicate requests
+const apiCache = new Map();
+
+const GalleryGrid = ({ 
+  categories = [], 
+  onImageClick, 
+  category = 'all',
+  fallbackImages = []
+}) => {
+  const [selectedCategory, setSelectedCategory] = useState(category);
+  const [filteredImages, setFilteredImages] = useState([]);
   const [visibleCount, setVisibleCount] = useState(12);
+  const [loading, setLoading] = useState(false);
+  const [apiImages, setApiImages] = useState([]);
+  const fetchTimeoutRef = useRef(null);
 
+  // Stable reference to fallback images
+  const fallbackImagesRef = useRef(fallbackImages);
+  useEffect(() => {
+    fallbackImagesRef.current = fallbackImages;
+  }, [fallbackImages]);
+
+  // Update selected category when prop changes
+  useEffect(() => {
+    setSelectedCategory(category);
+  }, [category]);
+
+  // Fetch images from API with fallback
+  useEffect(() => {
+    const cacheKey = category || 'all';
+    
+    // Check if we already have this data cached
+    if (apiCache.has(cacheKey)) {
+      setApiImages(apiCache.get(cacheKey));
+      return;
+    }
+
+    // Clear any existing timeout
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
+    }
+
+    // Set a timeout to debounce the API call
+    fetchTimeoutRef.current = setTimeout(async () => {
+      try {
+        setLoading(true);
+        const response = await ApiService.getGallery({ 
+          category: category !== 'all' ? category : undefined 
+        });
+        
+        if (response && response.images && response.images.length > 0) {
+          // Cache the response
+          apiCache.set(cacheKey, response.images);
+          setApiImages(response.images);
+        } else {
+          // Fallback to local images if API returns empty
+          const currentFallback = fallbackImagesRef.current;
+          apiCache.set(cacheKey, currentFallback);
+          setApiImages(currentFallback);
+        }
+      } catch (error) {
+        console.warn('Gallery API failed, using fallback images:', error);
+        // Cache fallback images to prevent retries
+        const currentFallback = fallbackImagesRef.current;
+        apiCache.set(cacheKey, currentFallback);
+        setApiImages(currentFallback);
+      } finally {
+        setLoading(false);
+      }
+    }, 300); // 300ms debounce
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
+  }, [category]);
+
+  // Filter API images by category
   useEffect(() => {
     if (selectedCategory === 'all') {
-      setFilteredImages(images);
+      setFilteredImages(apiImages);
     } else {
-      setFilteredImages(images.filter(img => img.category === selectedCategory));
+      setFilteredImages(apiImages.filter(img => img.category === selectedCategory));
     }
     setVisibleCount(12); // Reset visible count when category changes
-  }, [selectedCategory, images]);
+  }, [selectedCategory, apiImages]);
 
   const loadMore = () => {
     setVisibleCount(prev => prev + 12);
+  };
+
+  const handleImageClick = (image, index) => {
+    // Track gallery image view
+    track('gallery_image_view', {
+      category: category,
+      image_id: image._id || image.id,
+      image_title: image.title,
+      position: index
+    });
+
+    // Call the original onImageClick if provided
+    if (onImageClick) {
+      onImageClick(image, index, filteredImages);
+    }
   };
 
   const visibleImages = filteredImages.slice(0, visibleCount);
@@ -27,57 +119,66 @@ const GalleryGrid = ({ images = [], categories = [], onImageClick }) => {
 
   return (
     <div className="space-y-8">
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center py-8">
+          <LoadingSpinner size="lg" />
+        </div>
+      )}
+
       {/* Category Filter */}
-      {categories.length > 0 && (
+      {!loading && categories.length > 0 && (
         <div className="flex flex-wrap justify-center gap-3">
-          <Button
-            variant={selectedCategory === 'all' ? 'default' : 'outline'}
+          <AnimatedButton
+            variant={selectedCategory === 'all' ? 'primary' : 'outline'}
             onClick={() => setSelectedCategory('all')}
             className="capitalize"
           >
-            All ({images.length})
-          </Button>
+            All ({filteredImages.length})
+          </AnimatedButton>
           {categories.map((category) => {
-            const count = images.filter(img => img.category === category.slug).length;
+            const count = filteredImages.filter(img => img.category === category.slug).length;
             return (
-              <Button
+              <AnimatedButton
                 key={category.slug}
-                variant={selectedCategory === category.slug ? 'default' : 'outline'}
+                variant={selectedCategory === category.slug ? 'primary' : 'outline'}
                 onClick={() => setSelectedCategory(category.slug)}
                 className="capitalize"
               >
                 {category.name} ({count})
-              </Button>
+              </AnimatedButton>
             );
           })}
         </div>
       )}
 
       {/* Gallery Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <AnimatePresence mode="popLayout">
-          {visibleImages.map((image, index) => (
-            <GalleryItem
-              key={`${image._id}-${selectedCategory}`}
-              image={image}
-              index={index}
-              onClick={() => onImageClick && onImageClick(image, index)}
-            />
-          ))}
-        </AnimatePresence>
-      </div>
+      {!loading && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <AnimatePresence mode="popLayout">
+            {visibleImages.map((image, index) => (
+              <GalleryItem
+                key={`${image._id || image.id}-${selectedCategory}`}
+                image={image}
+                index={index}
+                onClick={() => handleImageClick(image, index)}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
 
       {/* Load More Button */}
       {hasMore && (
         <div className="text-center">
-          <Button
+          <AnimatedButton
             onClick={loadMore}
             variant="outline"
             size="lg"
             className="px-8"
           >
             Load More Images
-          </Button>
+          </AnimatedButton>
         </div>
       )}
 

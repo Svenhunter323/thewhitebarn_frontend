@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { FaHeart, FaHandsHelping, FaLeaf, FaPaw } from 'react-icons/fa';
 import AnimatedButton from '../components/ui/AnimatedButton';
+import PageSEO from '../components/seo/PageSEO';
 
 const Associations = () => {
   const associations = [
@@ -84,7 +85,26 @@ const Associations = () => {
   ];
 
   return (
-    <div className="">
+    <>
+      <PageSEO
+        title="Associations We Believe In - The White Barn FL | Community Support"
+        description="Learn about the charitable organizations and causes that The White Barn FL supports. We believe in giving back to our community and supporting meaningful causes."
+        canonical="/associations"
+        ogImage="/_og/associations.jpg"
+        schemaProps={{
+          name: "The White Barn FL - Community Associations",
+          description: "Supporting charitable organizations and meaningful causes in our community through partnerships and donations.",
+          amenityFeatures: [
+            "Community Support",
+            "Charitable Partnerships",
+            "Social Responsibility",
+            "Local Involvement",
+            "Giving Back"
+          ]
+        }}
+      />
+      
+      <div className="">
       {/* Page Title Section */}
       <section className="relative py-24 text-black overflow-hidden">
         {/* Background Image with Overlay */}
@@ -426,7 +446,8 @@ const Associations = () => {
           </motion.div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 };
 

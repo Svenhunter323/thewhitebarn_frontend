@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaWhatsapp } from 'react-icons/fa';
 import ContactForm from '../components/forms/ContactForm';
 import Map from '../components/map/Map';
+import PageSEO from '../components/seo/PageSEO';
 import ApiService from '../services/api';
 import { useApi } from '../hooks/useApi';
 import { trackPhoneClick, trackWhatsAppClick, trackBookTour, getWhatsAppLink } from '../utils/enhancedTracking.jsx';
@@ -73,7 +74,34 @@ const Contact = () => {
   ] : fallbackContactInfo;
 
   return (
-    <div className="">
+    <>
+      <PageSEO
+        title="Contact Us - The White Barn FL | Get in Touch"
+        description="Contact The White Barn FL for your event planning needs. Located in SW Ranches, Florida. Call us or schedule a venue tour today."
+        canonical="/contact"
+        ogImage="/_og/contact.jpg"
+        schemaProps={{
+          name: "The White Barn FL - Contact",
+          description: "Get in touch with The White Barn FL for event planning, venue tours, and booking inquiries.",
+          telephone: "+1-561-376-2855",
+          address: {
+            streetAddress: "4680 SW 148th Ave",
+            addressLocality: "SW Ranches",
+            addressRegion: "FL",
+            postalCode: "33330",
+            addressCountry: "US"
+          },
+          amenityFeatures: [
+            "Free Consultations",
+            "Venue Tours",
+            "Event Planning",
+            "Quick Response",
+            "Professional Service"
+          ]
+        }}
+      />
+      
+      <div className="">
       {/* Page Title Section */}
       <section className="relative py-24 text-black overflow-hidden">
         {/* Background Image with Overlay */}
@@ -391,7 +419,8 @@ const Contact = () => {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -247,6 +247,43 @@ class ApiService {
     return response.data;
   }
 
+  async getGallery(params = {}) {
+    const { category } = params;
+    
+    // Simple throttling - prevent rapid successive calls
+    const cacheKey = `gallery_${category || 'all'}`;
+    const now = Date.now();
+    
+    if (!this._requestCache) {
+      this._requestCache = new Map();
+    }
+    
+    const lastRequest = this._requestCache.get(cacheKey);
+    if (lastRequest && (now - lastRequest.timestamp) < 1000) { // 1 second throttle
+      return lastRequest.data;
+    }
+    
+    try {
+      const response = await publicAPI.getGalleryImages({ category });
+      const data = response.data;
+      
+      // Cache the response
+      this._requestCache.set(cacheKey, {
+        data,
+        timestamp: now
+      });
+      
+      return data;
+    } catch (error) {
+      // If we have cached data and the request fails, return cached data
+      if (lastRequest) {
+        console.warn('Gallery API failed, returning cached data:', error);
+        return lastRequest.data;
+      }
+      throw error;
+    }
+  }
+
   async getGalleryCategories() {
     const response = await publicAPI.getGalleryCategories();
     return response.data;

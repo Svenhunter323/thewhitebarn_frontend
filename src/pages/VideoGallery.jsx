@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import PageSEO from '../components/seo/PageSEO';
 import { FaPlay, FaTimes } from 'react-icons/fa';
 import AnimatedButton from '../components/ui/AnimatedButton';
 
@@ -61,7 +62,26 @@ const VideoGallery = () => {
   };
 
   return (
-    <div className="">
+    <>
+      <PageSEO
+        title="Video Gallery - The White Barn FL | Event Videos & Virtual Tours"
+        description="Watch stunning videos of events at The White Barn FL. See our venue in action with wedding videos, virtual tours, and event highlights from SW Ranches."
+        canonical="/video-gallery"
+        ogImage="/_og/video-gallery.jpg"
+        schemaProps={{
+          name: "The White Barn FL - Video Gallery",
+          description: "Video gallery showcasing events, virtual tours, and venue highlights at The White Barn FL.",
+          amenityFeatures: [
+            "Event Videos",
+            "Virtual Tours",
+            "Wedding Highlights",
+            "Venue Showcase",
+            "Video Documentation"
+          ]
+        }}
+      />
+      
+      <div className="">
       {/* Page Title */}
       <section className="relative py-24 text-black overflow-hidden">
         {/* Background Image with Overlay */}
@@ -309,7 +329,8 @@ const VideoGallery = () => {
           </motion.div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 };
 

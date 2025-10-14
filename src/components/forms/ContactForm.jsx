@@ -3,23 +3,40 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import ApiService from '../../services/api';
 import { useApiMutation } from '../../hooks/useApi';
-import { trackLeadSubmit } from '../../utils/enhancedTracking.jsx';
+import { trackLeadSubmit, getUTMParameters } from '../../utils/enhancedTracking.jsx';
 
-const ContactForm = ({ isFooter = true }) => {
+const ContactForm = ({ isFooter = true, source }) => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const { mutate, loading: isSubmitting } = useApiMutation();
 
   const onSubmit = async (data) => {
     try {
+      // Collect UTM parameters
+      const utmData = getUTMParameters();
+      const formSource = source || 'contact_form';
+      
       await mutate(() => ApiService.submitContactForm(data));
       
-      // Track successful lead submission
+      // Track successful lead submission with enhanced tracking
       trackLeadSubmit({
+        event_type: data.eventType || 'general_inquiry',
+        lead_source: formSource,
         form_type: isFooter ? 'footer' : 'contact_page',
         name: data.name,
         email: data.email,
-        subject: data.subject
+        subject: data.subject,
+        ...utmData
       });
+      
+      // Push lead_submit event to dataLayer for GTM
+      if (window.dataLayer) {
+        window.dataLayer.push({
+          event: 'lead_submit',
+          form_source: formSource,
+          event_type: data.eventType || 'general_inquiry',
+          ...utmData
+        });
+      }
       
       toast.success('Message sent successfully! We will get back to you soon.');
       reset();
@@ -54,9 +71,11 @@ const ContactForm = ({ isFooter = true }) => {
             {...register('name', { required: 'Name is required' })}
             className={inputClasses}
             placeholder="Enter your full name"
+            aria-invalid={errors.name ? 'true' : 'false'}
+            aria-describedby={errors.name ? 'name-error' : undefined}
           />
           {errors.name && (
-            <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>
+            <p id="name-error" className="mt-1 text-sm text-red-400">{errors.name.message}</p>
           )}
         </div>
 
@@ -75,9 +94,11 @@ const ContactForm = ({ isFooter = true }) => {
             })}
             className={inputClasses}
             placeholder="Enter your email"
+            aria-invalid={errors.email ? 'true' : 'false'}
+            aria-describedby={errors.email ? 'email-error' : undefined}
           />
           {errors.email && (
-            <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>
+            <p id="email-error" className="mt-1 text-sm text-red-400">{errors.email.message}</p>
           )}
         </div>
       </div>
@@ -91,9 +112,11 @@ const ContactForm = ({ isFooter = true }) => {
           {...register('subject', { required: 'Subject is required' })}
           className={inputClasses}
           placeholder="What is your inquiry about?"
+          aria-invalid={errors.subject ? 'true' : 'false'}
+          aria-describedby={errors.subject ? 'subject-error' : undefined}
         />
         {errors.subject && (
-          <p className="mt-1 text-sm text-red-400">{errors.subject.message}</p>
+          <p id="subject-error" className="mt-1 text-sm text-red-400">{errors.subject.message}</p>
         )}
       </div>
 
@@ -134,9 +157,11 @@ const ContactForm = ({ isFooter = true }) => {
           rows={5}
           className={inputClasses}
           placeholder="Tell us about your event..."
+          aria-invalid={errors.message ? 'true' : 'false'}
+          aria-describedby={errors.message ? 'message-error' : undefined}
         />
         {errors.message && (
-          <p className="mt-1 text-sm text-red-400">{errors.message.message}</p>
+          <p id="message-error" className="mt-1 text-sm text-red-400">{errors.message.message}</p>
         )}
       </div>
 

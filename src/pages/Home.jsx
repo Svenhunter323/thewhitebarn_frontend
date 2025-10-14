@@ -10,6 +10,7 @@ import ApiService from '../services/api';
 import { useApi } from '../hooks/useApi';
 import FlowerAnimation from '../components/ui/FlowerAnimation';
 import AnimatedButton from '../components/ui/AnimatedButton';
+import PageSEO from '../components/seo/PageSEO';
 
 const Home = () => {
   // State for image viewer
@@ -73,7 +74,34 @@ const Home = () => {
   const marqueeItems = ['Wedding', 'Party', 'Decoration', 'Catering'];
 
   return (
-    <div className="">
+    <>
+      <PageSEO
+        title="The White Barn FL - Premier Event Venue in SW Ranches, Florida"
+        description="The White Barn FL is a premier event venue in SW Ranches, Florida. Perfect for weddings, corporate events, and special celebrations. Where dreams come true."
+        canonical="/"
+        ogImage="/_og/home.jpg"
+        schemaProps={{
+          name: "The White Barn FL",
+          description: "Premier event venue in SW Ranches, Florida. Perfect for weddings, corporate events, and special celebrations.",
+          address: {
+            streetAddress: "4680 SW 148th Ave",
+            addressLocality: "SW Ranches",
+            addressRegion: "FL",
+            postalCode: "33330",
+            addressCountry: "US"
+          },
+          amenityFeatures: [
+            "Air Conditioning",
+            "Parking Available",
+            "Indoor/Outdoor Spaces",
+            "Wedding Services",
+            "Corporate Events",
+            "Event Planning"
+          ]
+        }}
+      />
+      
+      <div className="">
       {/* Hero Section */}
       <section className="relative min-h-[calc(30vh-6rem)] pt-24 md:pt-32 flex items-center overflow-hidden bg-cover bg-center" 
         style={{ backgroundImage: 'url("/images/backgrounds/hero-bg.jpg")' }}>
@@ -627,7 +655,8 @@ const Home = () => {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 };
 

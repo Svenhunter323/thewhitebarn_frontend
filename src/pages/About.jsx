@@ -1,9 +1,29 @@
 import { motion } from 'framer-motion';
 import AnimatedButton from '../components/ui/AnimatedButton';
+import PageSEO from '../components/seo/PageSEO';
 
 const About = () => {
   return (
-    <div className="">
+    <>
+      <PageSEO
+        title="About Us - The White Barn FL | Our Story & Mission"
+        description="Learn about The White Barn FL's story, our family-owned business, and our commitment to creating unforgettable events in SW Ranches, Florida."
+        canonical="/about"
+        ogImage="/_og/about.jpg"
+        schemaProps={{
+          name: "The White Barn FL - About Us",
+          description: "Family-owned event venue in SW Ranches, Florida, committed to creating unforgettable events and celebrations.",
+          amenityFeatures: [
+            "Family-Owned Business",
+            "Personalized Service",
+            "Event Planning",
+            "Professional Staff",
+            "Custom Packages"
+          ]
+        }}
+      />
+      
+      <div className="">
       {/* Page Title */}
       <section className="relative py-24 text-black overflow-hidden">
         {/* Background Image with Overlay */}
@@ -248,7 +268,8 @@ const About = () => {
           </motion.div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 };
 

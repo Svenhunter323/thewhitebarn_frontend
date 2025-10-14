@@ -16,6 +16,8 @@ import Corporate from './pages/Corporate';
 import ShowersFamily from './pages/ShowersFamily';
 import IndoorAC from './pages/IndoorAC';
 import Reviews from './pages/Reviews';
+import PrintSign from './pages/PrintSign';
+import SubmitReview from './pages/SubmitReview.jsx';
 
 // Admin components
 import AdminLayout from './components/admin/AdminLayout';
@@ -64,6 +66,8 @@ function App() {
               <Route path="showers-family" element={<ShowersFamily />} />
               <Route path="indoor-ac" element={<IndoorAC />} />
               <Route path="reviews" element={<Reviews />} />
+              <Route path="print-sign" element={<PrintSign />} />
+              <Route path='submit-review' element={<SubmitReview />} />
             </Route>
 
             {/* Admin Routes */}
