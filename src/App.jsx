@@ -18,6 +18,7 @@ import IndoorAC from './pages/IndoorAC';
 import Reviews from './pages/Reviews';
 import PrintSign from './pages/PrintSign';
 import SubmitReview from './pages/SubmitReview.jsx';
+import Partners from './pages/Partners';
 
 // Admin components
 import AdminLayout from './components/admin/AdminLayout';
@@ -30,6 +31,7 @@ import ReviewManagement from './pages/admin/ReviewManagement';
 import UserManagement from './pages/admin/UserManagement';
 import Analytics from './pages/admin/Analytics';
 import Settings from './pages/admin/Settings';
+import PartnerManagement from './pages/admin/PartnerManagement';
 
 import { initAllTracking, GTMNoScript, track } from './utils/enhancedTracking.jsx';
 
@@ -68,6 +70,7 @@ function App() {
               <Route path="reviews" element={<Reviews />} />
               <Route path="print-sign" element={<PrintSign />} />
               <Route path='submit-review' element={<SubmitReview />} />
+              <Route path="partners" element={<Partners />} />
             </Route>
 
             {/* Admin Routes */}
@@ -81,6 +84,7 @@ function App() {
               <Route path="reviews" element={<ReviewManagement />} />
               <Route path="users" element={<UserManagement />} />
               <Route path="admins" element={<UserManagement />} />
+              <Route path="partners" element={<PartnerManagement />} />
               <Route path="analytics" element={<Analytics />} />
               <Route path="settings" element={<Settings />} />
             </Route>

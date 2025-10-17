@@ -10,7 +10,8 @@ import {
   FaFileAlt,
   FaChartBar,
   FaTimes,
-  FaUpload
+  FaUpload,
+  FaHandshake
 } from 'react-icons/fa';
 
 const AdminSidebar = ({ isOpen, onClose }) => {
@@ -39,6 +40,12 @@ const AdminSidebar = ({ isOpen, onClose }) => {
       icon: FaStar,
       path: '/admin/reviews',
       description: 'Customer Testimonials'
+    },
+    {
+      title: 'Partners',
+      icon: FaHandshake,
+      path: '/admin/partners',
+      description: 'Affiliate & Influencer Program'
     },
     {
       title: 'Content',

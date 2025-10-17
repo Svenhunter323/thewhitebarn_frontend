@@ -75,6 +75,11 @@ export const publicAPI = {
 
   // Contact
   submitContactForm: (data) => axios.post('/contact', data),
+
+  // Partners (Public endpoints)
+  submitPartnerApplication: (data) => axios.post('/partners', data),
+  lookupPartner: (code) => axios.get(`/partners/lookup/${code}`),
+  getPartnerQR: (code) => axios.get(`/partners/qr/${code}`, { responseType: 'blob' }),
 };
 
 // =============================================================================
@@ -148,6 +153,16 @@ export const adminAPI = {
   // Settings
   getSettings: (category) => axios.get(`/settings/${category}`),
   updateSettings: (category, data) => axios.put(`/settings/${category}`, data),
+
+  // Partner Management
+  getPartners: (params = {}) => axios.get('/partners', { params }),
+  getPartner: (id) => axios.get(`/partners/${id}`),
+  createPartner: (data) => axios.post('/partners', data),
+  updatePartner: (id, data) => axios.put(`/partners/${id}`, data),
+  deletePartner: (id) => axios.delete(`/partners/${id}`),
+  getPartnerLeads: (code) => axios.get(`/admin/contacts/by-partner?code=${code}`),
+  getPartnerQR: (code) => axios.get(`/partners/qr/${code}`, { responseType: 'blob' }),
+  lookupPartner: (code) => axios.get(`/partners/lookup/${code}`),
 };
 
 // =============================================================================
@@ -346,6 +361,68 @@ class ApiService {
   async deleteReview(id) {
     const response = await adminAPI.deleteReview(id);
     return response.data;
+  }
+
+  // Partner methods
+  async getPartners(params = {}) {
+    const response = await adminAPI.getPartners(params);
+    return response.data;
+  }
+
+  async getPartner(id) {
+    const response = await adminAPI.getPartner(id);
+    return response.data;
+  }
+
+  async createPartner(data) {
+    const response = await adminAPI.createPartner(data);
+    return response.data;
+  }
+
+  async updatePartner(id, data) {
+    const response = await adminAPI.updatePartner(id, data);
+    return response.data;
+  }
+
+  async deletePartner(id) {
+    const response = await adminAPI.deletePartner(id);
+    return response.data;
+  }
+
+  async getPartnerLeads(code) {
+    const response = await adminAPI.getPartnerLeads(code);
+    return response.data;
+  }
+
+  async getPartnerQR(code) {
+    const response = await adminAPI.getPartnerQR(code);
+    return response.data;
+  }
+
+  async lookupPartner(code) {
+    const response = await adminAPI.lookupPartner(code);
+    return response.data;
+  }
+
+  // HTTP methods for direct usage
+  async get(endpoint, config = {}) {
+    const response = await axios.get(endpoint, config);
+    return response;
+  }
+
+  async post(endpoint, data = {}, config = {}) {
+    const response = await axios.post(endpoint, data, config);
+    return response;
+  }
+
+  async put(endpoint, data = {}, config = {}) {
+    const response = await axios.put(endpoint, data, config);
+    return response;
+  }
+
+  async delete(endpoint, config = {}) {
+    const response = await axios.delete(endpoint, config);
+    return response;
   }
 
   // Generic request method for backward compatibility

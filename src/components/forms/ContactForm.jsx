@@ -4,18 +4,28 @@ import toast from 'react-hot-toast';
 import ApiService from '../../services/api';
 import { useApiMutation } from '../../hooks/useApi';
 import { trackLeadSubmit, getUTMParameters } from '../../utils/enhancedTracking.jsx';
+import { useReferral } from '../../hooks/useReferral';
 
 const ContactForm = ({ isFooter = true, source }) => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const { mutate, loading: isSubmitting } = useApiMutation();
+  const { getReferralFormData, trackReferralConversion, getPartnerInfo } = useReferral();
 
   const onSubmit = async (data) => {
     try {
-      // Collect UTM parameters
+      // Collect UTM parameters and referral data
       const utmData = getUTMParameters();
+      const referralData = getReferralFormData();
       const formSource = source || 'contact_form';
       
-      await mutate(() => ApiService.submitContactForm(data));
+      // Merge form data with referral tracking
+      const submissionData = {
+        ...data,
+        ...referralData,
+        eventType: data.eventType || 'other'
+      };
+      
+      await mutate(() => ApiService.submitContactForm(submissionData));
       
       // Track successful lead submission with enhanced tracking
       trackLeadSubmit({
@@ -25,8 +35,19 @@ const ContactForm = ({ isFooter = true, source }) => {
         name: data.name,
         email: data.email,
         subject: data.subject,
-        ...utmData
+        ref_code: referralData.refCode || null,
+        partner_type: referralData.refSource || null,
+        ...utmData,
+        ...referralData
       });
+      
+      // Track referral conversion if this is a partner referral
+      if (referralData.refCode) {
+        trackReferralConversion('contact_form_submit', {
+          event_type: data.eventType || 'general_inquiry',
+          form_source: formSource
+        });
+      }
       
       // Push lead_submit event to dataLayer for GTM
       if (window.dataLayer) {
@@ -34,11 +55,19 @@ const ContactForm = ({ isFooter = true, source }) => {
           event: 'lead_submit',
           form_source: formSource,
           event_type: data.eventType || 'general_inquiry',
+          ref_code: referralData.refCode || null,
+          partner_type: referralData.refSource || null,
           ...utmData
         });
       }
       
-      toast.success('Message sent successfully! We will get back to you soon.');
+      // Show success message with partner acknowledgment if applicable
+      const partnerInfo = getPartnerInfo();
+      const successMessage = partnerInfo 
+        ? `Thank you! Your message has been sent. We appreciate the referral from ${partnerInfo.name}!`
+        : 'Message sent successfully! We will get back to you soon.';
+      
+      toast.success(successMessage);
       reset();
     } catch (error) {
       toast.error('Failed to send message. Please try again.');
@@ -121,31 +150,81 @@ const ContactForm = ({ isFooter = true, source }) => {
       </div>
 
       {!isFooter && (
-        <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <label className={labelClasses}>
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              {...register('phone')}
-              className={inputClasses}
-              placeholder="Enter your phone number"
-            />
+        <>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <label className={labelClasses}>
+                Event Type
+              </label>
+              <select
+                {...register('eventType')}
+                className={inputClasses}
+              >
+                <option value="other">General Inquiry</option>
+                <option value="wedding">Wedding</option>
+                <option value="corporate">Corporate Event</option>
+                <option value="shower">Shower/Celebration</option>
+                <option value="family">Family Event</option>
+              </select>
+            </div>
+
+            <div>
+              <label className={labelClasses}>
+                Event Date
+              </label>
+              <input
+                type="date"
+                {...register('eventDate')}
+                className={inputClasses}
+                min={new Date().toISOString().split('T')[0]}
+              />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <label className={labelClasses}>
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                {...register('phone')}
+                className={inputClasses}
+                placeholder="Enter your phone number"
+              />
+            </div>
+
+            <div>
+              <label className={labelClasses}>
+                Expected Guest Count
+              </label>
+              <input
+                type="number"
+                {...register('guestCount', { min: 1 })}
+                className={inputClasses}
+                placeholder="Number of guests"
+                min="1"
+              />
+            </div>
           </div>
 
           <div>
             <label className={labelClasses}>
-              Address
+              Budget Range
             </label>
-            <input
-              type="text"
-              {...register('address')}
+            <select
+              {...register('budget')}
               className={inputClasses}
-              placeholder="Enter your address"
-            />
+            >
+              <option value="not-specified">Prefer not to specify</option>
+              <option value="under-5k">Under $5,000</option>
+              <option value="5k-10k">$5,000 - $10,000</option>
+              <option value="10k-15k">$10,000 - $15,000</option>
+              <option value="15k-25k">$15,000 - $25,000</option>
+              <option value="25k-plus">$25,000+</option>
+            </select>
           </div>
-        </div>
+        </>
       )}
 
       <div>

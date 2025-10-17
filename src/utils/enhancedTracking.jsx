@@ -259,3 +259,98 @@ export const trackWithUTM = (event, params = {}) => {
   const utmParams = getUTMParameters();
   track(event, { ...params, ...utmParams });
 };
+
+// Partner-specific tracking functions
+export const trackPartnerVisit = (partnerData = {}) => {
+  track('partner_visit', {
+    event_category: 'Referral',
+    event_label: 'Partner Visit',
+    ref_code: partnerData.refCode,
+    partner_type: partnerData.partnerType,
+    utm_source: partnerData.utm?.source || 'direct',
+    utm_medium: partnerData.utm?.medium || 'referral',
+    utm_campaign: partnerData.utm?.campaign || '',
+    page_location: window.location.href,
+    page_title: document.title,
+    value: 1,
+    ...partnerData
+  });
+
+  // Facebook Pixel tracking
+  if (window.fbq) {
+    window.fbq('trackCustom', 'PartnerVisit', {
+      ref_code: partnerData.refCode,
+      partner_type: partnerData.partnerType,
+      utm_source: partnerData.utm?.source
+    });
+  }
+
+  // TikTok Pixel tracking
+  if (window.ttq) {
+    window.ttq.track('ClickButton', {
+      content_type: 'partner_referral',
+      content_id: partnerData.refCode,
+      content_name: partnerData.partnerName || partnerData.refCode
+    });
+  }
+};
+
+export const trackPartnerConversion = (conversionType, partnerData = {}, additionalData = {}) => {
+  track('partner_conversion', {
+    event_category: 'Referral',
+    event_label: 'Partner Conversion',
+    conversion_type: conversionType,
+    ref_code: partnerData.refCode,
+    partner_type: partnerData.partnerType,
+    utm_source: partnerData.utm?.source || 'direct',
+    utm_campaign: partnerData.utm?.campaign || '',
+    value: 1,
+    ...partnerData,
+    ...additionalData
+  });
+
+  // Facebook Pixel conversion tracking
+  if (window.fbq) {
+    window.fbq('track', 'Lead', {
+      ref_code: partnerData.refCode,
+      content_name: conversionType,
+      content_category: 'referral_conversion'
+    });
+  }
+
+  // TikTok Pixel conversion tracking
+  if (window.ttq) {
+    window.ttq.track('CompleteRegistration', {
+      content_type: 'referral_conversion',
+      content_id: partnerData.refCode,
+      description: conversionType
+    });
+  }
+};
+
+export const trackPartnerApplication = (applicationData = {}) => {
+  track('partner_application_submit', {
+    event_category: 'Partnership',
+    event_label: 'Partner Application',
+    partner_type: applicationData.type,
+    application_source: 'website',
+    value: 1,
+    ...applicationData
+  });
+
+  // Facebook Pixel
+  if (window.fbq) {
+    window.fbq('track', 'SubmitApplication', {
+      content_name: 'Partner Application',
+      content_category: applicationData.type
+    });
+  }
+
+  // TikTok Pixel
+  if (window.ttq) {
+    window.ttq.track('SubmitForm', {
+      content_type: 'partner_application',
+      form_type: applicationData.type
+    });
+  }
+};
