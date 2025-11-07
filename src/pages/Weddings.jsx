@@ -23,6 +23,7 @@ const Weddings = () => {
       page_category: 'services',
       ...getUTMParameters()
     });
+    
   }, []);
 
   // Gallery images will be handled by GalleryGrid component
@@ -281,12 +282,12 @@ const Weddings = () => {
               onImageClick={handleImageClick}
               category="wedding"
               fallbackImages={[
-                { _id: '1', url: '/images/gallery/wedding-1.jpg', title: 'Ceremony Setup', category: 'wedding' },
-                { _id: '2', url: '/images/gallery/wedding-2.jpg', title: 'Reception Hall', category: 'wedding' },
-                { _id: '3', url: '/images/gallery/wedding-3.jpg', title: 'Garden Views', category: 'wedding' },
-                { _id: '4', url: '/images/gallery/wedding-4.jpg', title: 'Bridal Suite', category: 'wedding' },
-                { _id: '5', url: '/images/gallery/wedding-5.jpg', title: 'Dance Floor', category: 'wedding' },
-                { _id: '6', url: '/images/gallery/wedding-6.jpg', title: 'Outdoor Ceremony', category: 'wedding' }
+                { _id: '1', url: '/images/gallery/gallery1.jpg', title: 'Ceremony Setup', category: 'wedding' },
+                { _id: '2', url: '/images/gallery/gallery2.jpg', title: 'Reception Hall', category: 'wedding' },
+                { _id: '3', url: '/images/gallery/gallery3.jpg', title: 'Garden Views', category: 'wedding' },
+                { _id: '4', url: '/images/gallery/gallery4.jpg', title: 'Bridal Suite', category: 'wedding' },
+                { _id: '5', url: '/images/gallery/gallery5.jpg', title: 'Dance Floor', category: 'wedding' },
+                { _id: '6', url: '/images/gallery/gallery6.jpg', title: 'Outdoor Ceremony', category: 'wedding' }
               ]}
             />
 

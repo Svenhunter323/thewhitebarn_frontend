@@ -14,7 +14,7 @@ export const useApi = (apiCall, deps = []) => {
         setLoading(true);
         setError(null);
         const result = await memoizedApiCall();
-        setData(result);
+        setData(result.data);
       } catch (err) {
         setError(err.message);
         console.error('API call failed:', err);

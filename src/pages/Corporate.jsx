@@ -13,6 +13,7 @@ const Corporate = () => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [lightboxImages, setLightboxImages] = useState([]);
   const [openFaq, setOpenFaq] = useState(null);
 
   // Track page view on mount
@@ -65,7 +66,8 @@ const Corporate = () => {
     }
   };
 
-  const handleImageClick = (image, index) => {
+  const handleImageClick = (image, index, allImages) => {
+    setLightboxImages(allImages || []);
     setCurrentImageIndex(index);
     setLightboxOpen(true);
   };
@@ -261,12 +263,13 @@ const Corporate = () => {
             </motion.div>
 
             <GalleryGrid 
-              images={galleryImages}
+              fallbackImages={galleryImages}
               onImageClick={handleImageClick}
+              category="corporate"
             />
 
             <Lightbox
-              images={galleryImages}
+              images={lightboxImages}
               currentIndex={currentImageIndex}
               isOpen={lightboxOpen}
               onClose={() => setLightboxOpen(false)}

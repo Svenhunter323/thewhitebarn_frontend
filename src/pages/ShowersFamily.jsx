@@ -14,6 +14,7 @@ const ShowersFamily = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [lightboxImages, setLightboxImages] = useState([]);
   const [openFaq, setOpenFaq] = useState(null);
 
   // Track page view on mount
@@ -51,6 +52,7 @@ const ShowersFamily = () => {
           { _id: '2', url: '/images/gallery/birthday-1.jpg', title: 'Birthday Celebration', category: 'family' }
         ]);
       }
+
     };
 
     fetchGalleryImages();
@@ -115,7 +117,8 @@ const ShowersFamily = () => {
     }
   };
 
-  const handleImageClick = (image, index) => {
+  const handleImageClick = (image, index, allImages) => {
+    setLightboxImages(allImages || []);
     setCurrentImageIndex(index);
     setLightboxOpen(true);
   };
@@ -324,12 +327,13 @@ const ShowersFamily = () => {
             </motion.div>
 
             <GalleryGrid 
-              images={galleryImages}
+              fallbackImages={galleryImages}
               onImageClick={handleImageClick}
+              category="family"
             />
 
             <Lightbox
-              images={galleryImages}
+              images={lightboxImages}
               currentIndex={currentImageIndex}
               isOpen={lightboxOpen}
               onClose={() => setLightboxOpen(false)}

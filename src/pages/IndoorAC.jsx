@@ -13,6 +13,7 @@ const IndoorAC = () => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [lightboxImages, setLightboxImages] = useState([]);
   const [openFaq, setOpenFaq] = useState(null);
 
   // Track page view on mount
@@ -69,7 +70,8 @@ const IndoorAC = () => {
     }
   };
 
-  const handleImageClick = (image, index) => {
+  const handleImageClick = (image, index, allImages) => {
+    setLightboxImages(allImages || []);
     setCurrentImageIndex(index);
     setLightboxOpen(true);
   };
@@ -353,12 +355,13 @@ const IndoorAC = () => {
             </motion.div>
 
             <GalleryGrid 
-              images={galleryImages}
+              fallbackImages={galleryImages}
               onImageClick={handleImageClick}
+              category="indoor"
             />
 
             <Lightbox
-              images={galleryImages}
+              images={lightboxImages}
               currentIndex={currentImageIndex}
               isOpen={lightboxOpen}
               onClose={() => setLightboxOpen(false)}

@@ -10,7 +10,6 @@ import { trackPhoneClick, trackWhatsAppClick, trackBookTour, getWhatsAppLink } f
 const Contact = () => {
   // Fetch dynamic contact details from backend
   const { data: contactDetails, loading: contactLoading } = useApi(() => ApiService.getContactDetails(), []);
-
   // Fallback contact info if API fails
   const fallbackContactInfo = [
     {
@@ -38,37 +37,37 @@ const Contact = () => {
   ];
 
   // Use API data or fallback
-  const contactInfo = contactDetails?.data ? [
+  const contactInfo = contactDetails? [
     {
       icon: FaPhone,
       title: 'Phone',
       details: [
-        contactDetails.data.phone || '(561) 376-2855', 
-        contactDetails.data.emergencyContact || '954-324-1474'
+        contactDetails.phone || '(561) 376-2855', 
+        contactDetails.emergencyContact || '954-324-1474'
       ].filter(Boolean),
       links: [
-        contactDetails.data.phone || '15613762855',
-        contactDetails.data.emergencyContact || '19543241474'
+        contactDetails.phone || '15613762855',
+        contactDetails.emergencyContact || '19543241474'
       ].filter(Boolean).map(phone => `tel:${phone.replace(/\D/g, '')}`)
     },
     {
       icon: FaEnvelope,
       title: 'Email',
-      details: [contactDetails.data.email || 'contact@thewhitebarnfl.com'],
-      links: [`mailto:${contactDetails.data.email || 'contact@thewhitebarnfl.com'}`]
+      details: [contactDetails.email || 'contact@thewhitebarnfl.com'],
+      links: [`mailto:${contactDetails.email || 'contact@thewhitebarnfl.com'}`]
     },
     {
       icon: FaMapMarkerAlt,
       title: 'Address',
-      details: contactDetails.data.address 
-        ? contactDetails.data.address.split(',').map(part => part.trim())
+      details: contactDetails.address 
+        ? contactDetails.address.split(',').map(part => part.trim())
         : ['4680 SW 148th Ave.', 'Fort Lauderdale, FL 33330']
     },
     {
       icon: FaClock,
       title: 'Hours',
-      details: contactDetails.data.hours 
-        ? contactDetails.data.hours.split(',').map(part => part.trim())
+      details: contactDetails.hours 
+        ? contactDetails.hours.split(',').map(part => part.trim())
         : ['Mon - Fri: 9:00 AM - 6:00 PM', 'Sat - Sun: By Appointment']
     }
   ] : fallbackContactInfo;

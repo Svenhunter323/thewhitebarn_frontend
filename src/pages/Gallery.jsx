@@ -81,6 +81,7 @@ const Gallery = () => {
         description: img.description || '',
         alt: img.alt || img.title || 'Gallery Image'
       }));
+
     } catch (error) {
       console.error('Error processing gallery images:', error);
     }
@@ -302,7 +303,7 @@ const Gallery = () => {
                       alt={image.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={(e) => {
-                        e.target.src = '/images/gallery/gallery1.jpg'; // Fallback image
+                        e.target.src = `/images/gallery/gallery${Math.floor(Math.random() * 10) + 1}.jpg`; // Fallback image
                         e.target.className = 'w-full h-full object-cover opacity-75';
                       }}
                     />

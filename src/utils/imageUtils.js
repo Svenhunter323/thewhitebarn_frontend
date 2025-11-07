@@ -16,10 +16,10 @@ export const getPlaceholderUrl = () => {
 
 // Helper function to get thumbnail URL with fallback
 export const getThumbnailUrl = (image) => {
-  return getImageUrl(image.thumbnail || image.path);
+  return getImageUrl(image.thumbnail || image.path || image.url);
 };
 
 // Helper function to get full resolution image URL
 export const getFullImageUrl = (image) => {
-  return getImageUrl(image.path);
+  return getImageUrl(image.path || image.url);
 };

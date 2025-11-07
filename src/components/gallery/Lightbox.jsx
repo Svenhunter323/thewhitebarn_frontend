@@ -85,47 +85,44 @@ const Lightbox = ({
         onClick={onClose}
       >
         {/* Close Button */}
-        <AnimatedButton
-          variant="ghost"
-          size="icon"
+        <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 text-white hover:bg-white/10"
+          className="fixed top-4 right-4 z-[60] w-12 h-12 bg-black/70 hover:bg-black rounded-full flex items-center justify-center text-white transition-colors"
+          aria-label="Close lightbox"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
-        </AnimatedButton>
+        </button>
 
         {/* Navigation Buttons */}
         {images.length > 1 && (
           <>
-            <AnimatedButton
-              variant="ghost"
-              size="icon"
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 handlePrev();
               }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white hover:bg-white/10"
+              className="fixed left-4 top-1/2 -translate-y-1/2 z-[60] w-12 h-12 bg-black/70 hover:bg-black rounded-full flex items-center justify-center text-white transition-colors"
+              aria-label="Previous image"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-            </AnimatedButton>
+            </button>
 
-            <AnimatedButton
-              variant="ghost"
-              size="icon"
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 handleNext();
               }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white hover:bg-white/10"
+              className="fixed right-4 top-1/2 -translate-y-1/2 z-[60] w-12 h-12 bg-black/70 hover:bg-black rounded-full flex items-center justify-center text-white transition-colors"
+              aria-label="Next image"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </AnimatedButton>
+            </button>
           </>
         )}
 
@@ -140,7 +137,7 @@ const Lightbox = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.3 }}
-            className="relative max-w-7xl max-h-[90vh] w-full"
+            className="relative w-full max-w-6xl max-h-[90vh] flex items-center justify-center"
           >
             {/* Loading Spinner */}
             {isLoading && (
@@ -165,7 +162,7 @@ const Lightbox = ({
             <img
               src={getFullImageUrl(currentImage)}
               alt={currentImage.title || `Image ${imageIndex + 1}`}
-              className={`w-full h-full object-contain rounded-lg ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+              className={`max-w-full object-contain rounded-lg shadow-2xl ${isLoading ? 'opacity-0' : 'opacity-100'}`}
               onLoad={() => setIsLoading(false)}
               onError={() => {
                 setIsLoading(false);
