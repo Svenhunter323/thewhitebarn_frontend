@@ -234,6 +234,41 @@ export const trackBookTour = (tourType = 'general') => {
   });
 };
 
+// Google Ads conversion tracking functions
+// These send events through GTM dataLayer which forwards to Google Ads
+export const trackGoogleAdsConversion = (conversionLabel, value = 1, currency = 'USD') => {
+  const googleAdsId = import.meta.env.VITE_GOOGLE_ADS_ID;
+  
+  if (window.dataLayer && googleAdsId) {
+    window.dataLayer.push({
+      event: 'conversion',
+      google_conversion_id: googleAdsId,
+      google_conversion_label: conversionLabel,
+      google_conversion_value: value,
+      google_conversion_currency: currency
+    });
+  }
+};
+
+// Specific Google Ads conversion events
+export const trackLeadConversion = (formData = {}) => {
+  trackLeadSubmit(formData);
+  // Add your Google Ads conversion label here when you get it from Google Ads
+  trackGoogleAdsConversion('LEAD_CONVERSION_LABEL', 1);
+};
+
+export const trackPhoneConversion = (phoneNumber) => {
+  trackPhoneClick(phoneNumber);
+  // Add your Google Ads conversion label here when you get it from Google Ads
+  trackGoogleAdsConversion('PHONE_CONVERSION_LABEL', 1);
+};
+
+export const trackBookingConversion = (tourType = 'general') => {
+  trackBookTour(tourType);
+  // Add your Google Ads conversion label here when you get it from Google Ads
+  trackGoogleAdsConversion('BOOKING_CONVERSION_LABEL', 1);
+};
+
 // WhatsApp utility function
 export const getWhatsAppLink = (message = '') => {
   const phoneNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
